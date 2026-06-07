@@ -1,0 +1,351 @@
+{
+  "vehicleInfo": {
+    "massKilograms": {
+      "mean": 2160
+    },
+    "batteryLevelWh": {
+      "mean": 59875
+    },
+    "batteryCapacityWh": {
+      "mean": 60480
+    },
+    "hvacStatus": "ON_HVAC_STATUS",
+    "referenceAirDensity": 1.225,
+    "externalTempCelsius": 46.0,
+    "batteryTempCelsius": 40.0,
+    "peakMotorPowerWatts": 150000,
+    "maximumChargingRateWatts": 88000,
+    "heatPumpEquipped": true
+  },
+  "roadLoad": {
+    "constant": {
+      "mean": 280
+    },
+    "linear": {
+      "mean": 1.6
+    },
+    "quadratic": {
+      "mean": 0.42
+    }
+  },
+  "drivetrainLosses": {
+    "drivetrainPowerLoss": [
+      {
+        "lossAtPower": [
+          {
+            "powerWatts": -30000,
+            "lossWatts": {
+              "mean": 1200
+            }
+          },
+          {
+            "lossWatts": {
+            }
+          },
+          {
+            "powerWatts": 20000,
+            "lossWatts": {
+              "mean": 900
+            }
+          },
+          {
+            "powerWatts": 60000,
+            "lossWatts": {
+              "mean": 3000
+            }
+          },
+          {
+            "powerWatts": 120000,
+            "lossWatts": {
+              "mean": 7500
+            }
+          }
+        ]
+      },
+      {
+        "speedMetersPerSecond": 13.9,
+        "lossAtPower": [
+          {
+            "powerWatts": -30000,
+            "lossWatts": {
+              "mean": 1200
+            }
+          },
+          {
+            "lossWatts": {
+            }
+          },
+          {
+            "powerWatts": 20000,
+            "lossWatts": {
+              "mean": 900
+            }
+          },
+          {
+            "powerWatts": 60000,
+            "lossWatts": {
+              "mean": 3000
+            }
+          },
+          {
+            "powerWatts": 120000,
+            "lossWatts": {
+              "mean": 7500
+            }
+          }
+        ]
+      },
+      {
+        "speedMetersPerSecond": 27.8,
+        "lossAtPower": [
+          {
+            "powerWatts": -30000,
+            "lossWatts": {
+              "mean": 1200
+            }
+          },
+          {
+            "lossWatts": {
+            }
+          },
+          {
+            "powerWatts": 20000,
+            "lossWatts": {
+              "mean": 900
+            }
+          },
+          {
+            "powerWatts": 60000,
+            "lossWatts": {
+              "mean": 3000
+            }
+          },
+          {
+            "powerWatts": 120000,
+            "lossWatts": {
+              "mean": 7500
+            }
+          }
+        ]
+      },
+      {
+        "speedMetersPerSecond": 41.7,
+        "lossAtPower": [
+          {
+            "powerWatts": -30000,
+            "lossWatts": {
+              "mean": 1200
+            }
+          },
+          {
+            "lossWatts": {
+            }
+          },
+          {
+            "powerWatts": 20000,
+            "lossWatts": {
+              "mean": 900
+            }
+          },
+          {
+            "powerWatts": 60000,
+            "lossWatts": {
+              "mean": 3000
+            }
+          },
+          {
+            "powerWatts": 120000,
+            "lossWatts": {
+              "mean": 7500
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "maxRegenPower": {
+    "regenerationRateAtEnergyLevel": [
+      {
+        "regenerationRateWatts": 65000
+      },
+      {
+        "energyLevelWh": 10000,
+        "regenerationRateWatts": 65000
+      },
+      {
+        "energyLevelWh": 40000,
+        "regenerationRateWatts": 45000
+      },
+      {
+        "energyLevelWh": 60480,
+        "regenerationRateWatts": 15000
+      }
+    ],
+    "regenerationRateAtTime": [
+      {
+        "regenerationRateWatts": 65000
+      },
+      {
+        "relativeTimeSec": 3600,
+        "regenerationRateWatts": 65000
+      }
+    ]
+  },
+  "batteryLosses": {
+    "batteryPowerLoss": [
+      {
+        "powerWatts": -50000,
+        "lossWatts": {
+          "mean": 1200
+        }
+      },
+      {
+        "powerWatts": -20000,
+        "lossWatts": {
+          "mean": 400
+        }
+      },
+      {
+        "lossWatts": {
+        }
+      },
+      {
+        "powerWatts": 20000,
+        "lossWatts": {
+          "mean": 500
+        }
+      },
+      {
+        "powerWatts": 60000,
+        "lossWatts": {
+          "mean": 1800
+        }
+      },
+      {
+        "powerWatts": 120000,
+        "lossWatts": {
+          "mean": 5200
+        }
+      }
+    ]
+  },
+  "auxiliaryDrainAtTime": [
+    {
+      "drainWatts": {
+        "mean": 1800
+      }
+    }
+  ],
+  "auxiliaryDrainAtTemp": [
+    {
+      "tempCelsius": 20.0,
+      "hvacDrainWatts": {
+        "mean": 300
+      },
+      "batteryConditioningDrainWatts": {
+      },
+      "totalDrainWatts": {
+        "mean": 450
+      }
+    },
+    {
+      "tempCelsius": 30.0,
+      "hvacDrainWatts": {
+        "mean": 800
+      },
+      "batteryConditioningDrainWatts": {
+      },
+      "totalDrainWatts": {
+        "mean": 1000
+      }
+    },
+    {
+      "tempCelsius": 40.0,
+      "hvacDrainWatts": {
+        "mean": 1200
+      },
+      "batteryConditioningDrainWatts": {
+      },
+      "totalDrainWatts": {
+        "mean": 2100
+      }
+    }
+  ],
+  "chargingCurves": {
+    "chargingCurveAtPower": [
+      {
+        "inputPowerWatts": 7000,
+        "timeToFullBattery": [
+          {
+          },
+          {
+            "energyToFullWh": 10000,
+            "timeToFullSecs": 5400
+          },
+          {
+            "energyToFullWh": 30000,
+            "timeToFullSecs": 16200
+          },
+          {
+            "energyToFullWh": 60480,
+            "timeToFullSecs": 34200
+          }
+        ]
+      },
+      {
+        "inputPowerWatts": 50000,
+        "timeToFullBattery": [
+          {
+          },
+          {
+            "energyToFullWh": 10000,
+            "timeToFullSecs": 900
+          },
+          {
+            "energyToFullWh": 30000,
+            "timeToFullSecs": 2700
+          },
+          {
+            "energyToFullWh": 50000,
+            "timeToFullSecs": 5400
+          },
+          {
+            "energyToFullWh": 60480,
+            "timeToFullSecs": 7200
+          }
+        ]
+      },
+      {
+        "inputPowerWatts": 88000,
+        "timeToFullBattery": [
+          {
+          },
+          {
+            "energyToFullWh": 10000,
+            "timeToFullSecs": 600
+          },
+          {
+            "energyToFullWh": 20000,
+            "timeToFullSecs": 1200
+          },
+          {
+            "energyToFullWh": 30000,
+            "timeToFullSecs": 1900
+          },
+          {
+            "energyToFullWh": 42000,
+            "timeToFullSecs": 2700
+          },
+          {
+            "energyToFullWh": 50000,
+            "timeToFullSecs": 4200
+          },
+          {
+            "energyToFullWh": 60480,
+            "timeToFullSecs": 6300
+          }
+        ]
+      }
+    ]
+  }
+}
