@@ -1,6 +1,0 @@
-<resources>
-    <!-- Base application theme. -->
-    <style name="Base.Theme.CarService" parent="android:Theme.DeviceDefault" />
-
-    <style name="Theme.CarService" parent="Base.Theme.CarService" />
-</resources>

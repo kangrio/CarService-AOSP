@@ -39,11 +39,6 @@ android {
 }
 
 dependencies {
-//    val sdkDir = "C:\\Users\\masol\\AppData\\Local\\Android\\Sdk"
-//
-//    val androidCarJar = "$sdkDir/platforms/android-29/optional/android.car.jar"
-//    compileOnly(files(androidCarJar))
-
     implementation(files("libs/android.car.jar"))
 
     implementation(libs.androidx.activity.ktx)

@@ -23,7 +23,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Car Service"
-include(":carprovider")
-//include(":carframework")
 include(":carserver")
 include(":carservertest")

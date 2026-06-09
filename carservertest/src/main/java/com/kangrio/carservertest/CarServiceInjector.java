@@ -42,9 +42,10 @@ public class CarServiceInjector {
         }
     }
 
+    @SuppressWarnings("unused")
     public static void inject(Context context) {
-        Intent intent = new Intent();
-        intent.setComponent(new ComponentName("com.android.car", "com.kangrio.carserver.CarService"));
+        Intent intent = new Intent("android.car.ICar");
+        intent.setPackage("com.kangrio.carserver");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             context.bindService(intent, Context.BIND_AUTO_CREATE, Executors.newSingleThreadExecutor(), serviceConnection);
         }

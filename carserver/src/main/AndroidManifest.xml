@@ -1,8 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    android:sharedUserId="com.google.android.apps.maps">
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_DISPLAY_IN_CLUSTER"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_NAVIGATION_MANAGER"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.READ_CAR_POWER_POLICY"
+        android:protectionLevel="normal" />
+
+    <permission
+        android:name="com.kangrio.carservice.permission.VMS_PUBLISHER"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.VMS_SUBSCRIBER"
+        android:protectionLevel="normal" />
+
+
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_SPEED"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_VENDOR_EXTENSION"
+        android:protectionLevel="normal" />
+
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_INFO"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_ENERGY"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_POWERTRAIN"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_ENERGY_PORTS"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.READ_CAR_DISPLAY_UNITS"
+        android:protectionLevel="normal" />
 
     <application
         android:name="com.kangrio.carserver.App"
@@ -21,15 +71,38 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".activity.PermissionActivity" />
 
         <service
-            android:name="com.kangrio.carserver.CarService"
+            android:name="com.kangrio.carserver.service.CarService"
             android:exported="true"
             android:foregroundServiceType="dataSync">
             <intent-filter>
                 <action android:name="android.car.ICar" />
             </intent-filter>
         </service>
-    </application>
 
+        <service
+            android:name=".service.AbrpTelemetryService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <receiver
+            android:name=".receiver.AwakeReceiver"
+            android:exported="true">
+            <intent-filter android:priority="100">
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+                <action android:name="android.intent.action.BATTERY_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <provider
+            android:name=".provider.MapsProvider"
+            android:authorities="kangrio_google_maps_energy;kangrio_google_maps_settings;kangrio_google_maps_assisted_driving;kangrio_google_maps_vehicle_profile"
+            android:enabled="true"
+            android:exported="true" />
+    </application>
 </manifest>
