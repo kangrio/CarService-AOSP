@@ -208,16 +208,19 @@ class PropertyUpdater(val propertyService: PropertyService) :
     }
 
     override fun setSpeedMetersPerSec(speed: Float) {
+        LogUtils.i(TAG, "setSpeedMetersPerSec speed=${speed}m/s, ${speed * 3.6}km/h")
         setGlobalProperty(VehiclePropertyIds.PERF_VEHICLE_SPEED, speed)
         VehicleStore.SPEED_METER_PER_SEC.set(VehicleStore, speed)
     }
 
     override fun setConsumptionWhPer100km(wh: Int) {
+        LogUtils.i(TAG, "setConsumptionWhPer100km wh=$wh")
         EnergyModelFactory.setConsumptionWh(wh)
         VehicleStore.CONSUMPTION_WH_PER_100KM.set(VehicleStore, wh)
     }
 
     override fun setBatteryLevelPercent(percent: Float) {
+        LogUtils.i(TAG, "setBatteryLevelPercent percent=$percent")
         val batteryCapacityWh = VehicleStore.BATTERY_CAPACITY_WH
             .getOrDefault(
                 VehicleStore,
@@ -230,26 +233,31 @@ class PropertyUpdater(val propertyService: PropertyService) :
     }
 
     fun setBatteryHealthPercent(float: Float) {
+        LogUtils.i(TAG, "setBatteryHealthPercent percent=$float")
         VehicleStore.BATTERY_HEALTH_PERCENT.set(VehicleStore, float)
     }
 
     override fun setCurrentGear(gear: Int) {
+        LogUtils.i(TAG, "setCurrentGear gear=$gear")
         setParkingBrakeOn(gear == VehicleGear.GEAR_PARK)
         setGlobalProperty(VehiclePropertyIds.GEAR_SELECTION, gear)
         VehicleStore.CURRENT_GEAR.set(VehicleStore, gear)
     }
 
     override fun setParkingBrakeOn(on: Boolean) {
+        LogUtils.i(TAG, "setParkingBrakeOn on=$on")
         setGlobalProperty(VehiclePropertyIds.PARKING_BRAKE_ON, on)
         VehicleStore.PARKING_BRAKE_ON.set(VehicleStore, on)
     }
 
     override fun setIgnitionState(state: Int) {
+        LogUtils.i(TAG, "setIgnitionState state=$state")
         setGlobalProperty(VehiclePropertyIds.IGNITION_STATE, state)
         VehicleStore.IGNITION_STATE.set(VehicleStore, state)
     }
 
     override fun setChargingPortConnected(connected: Boolean) {
+        LogUtils.i(TAG, "setChargingPortConnected connected=$connected")
         setGlobalProperty(VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED, connected)
         VehicleStore.CHARGE_PORT_CONNECTED.set(VehicleStore, connected)
     }
@@ -265,6 +273,7 @@ class PropertyUpdater(val propertyService: PropertyService) :
         val currentAmp = VehicleStore.BATTERY_CURRENT_AMP.getOrDefault(VehicleStore, 0f)
 
         val wh = (volts.toFloat() * currentAmp).toInt()
+        LogUtils.i(TAG, "setChargingRateWh volt=$volts currentAmp=$currentAmp wh=$wh")
         VehicleStore.CHARGE_RATE_WH.set(VehicleStore, wh)
     }
 
