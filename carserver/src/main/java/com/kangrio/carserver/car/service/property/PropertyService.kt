@@ -93,8 +93,9 @@ class PropertyService : ICarProperty.Stub() {
     }
 
     override fun getProperty(prop: Int, zone: Int): CarPropertyValue<*>? {
-        LogUtils.i(TAG, "getProperty prop=$prop zone=$zone")
-        return if (values.containsKey(prop)) currentValue(prop, zone) else null
+        val currentValue = if (values.containsKey(prop)) currentValue(prop, zone) else null
+        LogUtils.i(TAG, "getProperty prop=$prop zone=$zone, result=${currentValue?.value}")
+        return currentValue
     }
 
     override fun setProperty(prop: CarPropertyValue<*>?) {
@@ -204,6 +205,7 @@ class PropertyService : ICarProperty.Stub() {
     private fun defaultValues(): Map<Int, Any> {
         /**
          * 289410887
+         * GENERAL_SAFETY_REGULATION_COMPLIANCE on android 13
          * INFO_EXTERIOR_DIMENSIONS
          */
         return linkedMapOf(
