@@ -82,18 +82,18 @@ class CarService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder {
-        LogUtils.i(TAG, "onBind action=${intent?.action}")
+        LogUtils.i(TAG, "onBind intent=${intent}")
         return carServer
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
-        LogUtils.i(TAG, "onUnbind action=${intent?.action}")
-        return super.onUnbind(intent)
+        LogUtils.i(TAG, "onUnbind intent=${intent}")
+        stopSelf()
+        return false
     }
 
     override fun onDestroy() {
         LogUtils.i(TAG, "onDestroy")
-        AbrpTelemetryService.start(this)
         carServer.release()
         super.onDestroy()
     }

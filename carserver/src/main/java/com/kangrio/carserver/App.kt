@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import com.kangrio.carserver.datastore.SettingsStore
 import com.kangrio.carserver.datastore.VehicleStore
-import com.kangrio.carserver.service.CarService
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 
 
@@ -40,9 +39,6 @@ class App : Application() {
         VehicleStore.init(this)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             HiddenApiBypass.addHiddenApiExemptions("")
-        }
-        if (isPermissionGranted()) {
-            CarService.start(this)
         }
     }
 
