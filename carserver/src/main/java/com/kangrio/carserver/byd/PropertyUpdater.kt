@@ -81,7 +81,7 @@ class PropertyUpdater(val propertyService: PropertyService) :
     fun collectInitialValue() {
         if (BydServices.supportAutoService) {
             try {
-                val driverSeat = BodyworkDevice.getDriverSeat()
+                val driverSeat = VehicleStore.DRIVER_SEAT.getOrDefault(VehicleStore, BodyworkDevice.getDriverSeat())
                 setDriverSeat(driverSeat)
 
                 val capacityWh = BatteryDevice.getBatteryCapacityWh()
