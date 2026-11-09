@@ -2,6 +2,7 @@ package com.kangrio.carserver.datastore
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.annotation.CallSuper
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
@@ -35,7 +36,8 @@ open class DataStoreBase(val name: String) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     lateinit var file: File
 
-    fun init(context: Context) {
+    @CallSuper
+    open fun init(context: Context) {
         dataStore = PreferenceDataStoreFactory.create {
             file = context.preferencesDataStoreFile(name)
             file
