@@ -265,7 +265,7 @@ class PropertyService : ICarProperty.Stub() {
             )), // m/s
 
             // on Android 13 maps requested this propertyId, has provided 0 and 1 but still not working to make maps reading vehicleInfo
-            289410887 to 0, //
+//            289410887 to 0, //
 
 //            VehiclePropertyIds.INFO_FUEL_CAPACITY to 0f, //
 //            VehiclePropertyIds.EV_BATTERY_LEVEL to 48_384f, //
