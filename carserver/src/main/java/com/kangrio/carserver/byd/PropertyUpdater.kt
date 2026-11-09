@@ -81,6 +81,9 @@ class PropertyUpdater(val propertyService: PropertyService) :
     fun collectInitialValue() {
         if (BydServices.supportAutoService) {
             try {
+                val driverSeat = BodyworkDevice.getDriverSeat()
+                setDriverSeat(driverSeat)
+
                 val capacityWh = BatteryDevice.getBatteryCapacityWh()
                 VehicleStore.BATTERY_CAPACITY_WH.set(VehicleStore, capacityWh)
 
@@ -260,6 +263,12 @@ class PropertyUpdater(val propertyService: PropertyService) :
         LogUtils.i(TAG, "setChargingPortConnected connected=$connected")
         setGlobalProperty(VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED, connected)
         VehicleStore.CHARGE_PORT_CONNECTED.set(VehicleStore, connected)
+    }
+
+    override fun setDriverSeat(seat: Int) {
+        LogUtils.i(TAG, "setRightDriver rightDriver=$seat")
+        setGlobalProperty(VehiclePropertyIds.INFO_DRIVER_SEAT, seat)
+        VehicleStore.DRIVER_SEAT.set(VehicleStore, seat)
     }
 
     fun setChargingRateWh(volt: Int? = null, amp: Float? = null) {

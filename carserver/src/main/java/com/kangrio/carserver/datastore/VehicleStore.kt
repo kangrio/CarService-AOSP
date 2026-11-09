@@ -30,4 +30,5 @@ object VehicleStore : DataStoreBase("vehicle") {
     val CURRENT_GEAR = intPreferencesKey("vehicle_current_gear")
     val IGNITION_STATE = intPreferencesKey("vehicle_ignition_state")
     val PARKING_BRAKE_ON = booleanPreferencesKey("vehicle_parking_brake_on")
+    val DRIVER_SEAT = intPreferencesKey("vehicle_driver_seat")
 }

@@ -17,6 +17,7 @@ import android.car.hardware.property.ICarPropertyEventListener
 import android.os.IBinder
 import android.os.RemoteCallbackList
 import android.os.SystemClock
+import android.os.SystemProperties
 import com.kangrio.carserver.byd.PropertyUpdater
 import com.kangrio.carserver.datastore.VehicleStore
 import com.kangrio.carserver.util.LogUtils
@@ -210,7 +211,6 @@ class PropertyService : ICarProperty.Stub() {
             VehiclePropertyIds.INFO_MAKE to "BYD",
             VehiclePropertyIds.INFO_MODEL to "ATTO 3 Extended Range",
             VehiclePropertyIds.INFO_MODEL_YEAR to 2023,
-            VehiclePropertyIds.INFO_DRIVER_SEAT to VehicleAreaSeat.SEAT_ROW_1_LEFT,
             VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY to PropertyUpdater.DEFAULT_BATTERY_CAPACITY_WH,
             VehiclePropertyIds.INFO_EV_CONNECTOR_TYPE to arrayOf(
                 Integer.valueOf(EvChargingConnectorType.IEC_TYPE_2_AC),
@@ -220,6 +220,10 @@ class PropertyService : ICarProperty.Stub() {
             VehiclePropertyIds.INFO_FUEL_TYPE to arrayOf(Integer.valueOf(FuelType.ELECTRIC)),
 
             // changeable
+            VehiclePropertyIds.INFO_DRIVER_SEAT to VehicleStore.DRIVER_SEAT.getOrDefault(
+                VehicleStore,
+                VehicleAreaSeat.SEAT_ROW_1_LEFT
+            ),
             VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED to VehicleStore.CHARGE_PORT_CONNECTED.getOrDefault(
                 VehicleStore,
                 false

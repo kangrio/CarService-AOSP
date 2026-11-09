@@ -8,4 +8,5 @@ interface IPropertyUpdater {
     fun setParkingBrakeOn(on: Boolean)
     fun setIgnitionState(state: Int)
     fun setChargingPortConnected(connected: Boolean)
+    fun setDriverSeat(seat: Int)
 }
