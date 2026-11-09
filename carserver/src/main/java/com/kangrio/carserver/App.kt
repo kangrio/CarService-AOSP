@@ -35,6 +35,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        CrashHandler.install(this)
         SettingsStore.init(this)
         VehicleStore.init(this)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
