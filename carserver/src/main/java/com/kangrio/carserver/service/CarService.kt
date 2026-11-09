@@ -45,7 +45,7 @@ class CarService : Service() {
                 stopService(Intent(this, AbrpTelemetryService::class.java))
             }
         }
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     fun startForeground() {
