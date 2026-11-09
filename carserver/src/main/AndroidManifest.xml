@@ -63,7 +63,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CarService">
         <activity
-            android:name="com.kangrio.carserver.MainActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -72,6 +72,8 @@
         </activity>
 
         <activity android:name=".activity.PermissionActivity" />
+        <activity android:name=".activity.VehicleSettings" />
+        <activity android:name=".activity.AbrpSettings" />
 
         <service
             android:name="com.kangrio.carserver.service.CarService"

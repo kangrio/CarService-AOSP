@@ -1,6 +1,6 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="Theme.CarService" parent="Theme.AppCompat.DayNight">
-
+    <style name="Theme.CarService" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:padding">8dp</item>
     </style>
 </resources>
