@@ -208,10 +208,16 @@ class PropertyService : ICarProperty.Stub() {
          * GENERAL_SAFETY_REGULATION_COMPLIANCE on android 13
          * INFO_EXTERIOR_DIMENSIONS
          */
+        val vin = buildString(17) { repeat(17) { append("ABCDEFGHJKLMNPRSTUVWXYZ0123456789".random()) } }
+        val vehicleVin = VehicleStore.VEHICLE_VIN.getOrDefault(
+            VehicleStore,
+            vin
+        )
+        val vehicleName = VehicleStore.VEHICLE_NAME.getOrDefault(
+            VehicleStore,
+            "BYD ${vin.substring(0, 4)}"
+        )
         return linkedMapOf(
-            VehiclePropertyIds.INFO_VIN to "BYDATTO3EXD2023",
-            VehiclePropertyIds.INFO_MAKE to "BYD",
-            VehiclePropertyIds.INFO_MODEL to "ATTO 3 Extended Range",
             VehiclePropertyIds.INFO_MODEL_YEAR to 2023,
             VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY to PropertyUpdater.DEFAULT_BATTERY_CAPACITY_WH,
             VehiclePropertyIds.INFO_EV_CONNECTOR_TYPE to arrayOf(
@@ -222,6 +228,9 @@ class PropertyService : ICarProperty.Stub() {
             VehiclePropertyIds.INFO_FUEL_TYPE to arrayOf(Integer.valueOf(FuelType.ELECTRIC)),
 
             // changeable
+            VehiclePropertyIds.INFO_VIN to vehicleVin,
+            VehiclePropertyIds.INFO_MAKE to vehicleName,
+            VehiclePropertyIds.INFO_MODEL to vehicleName,
             VehiclePropertyIds.INFO_DRIVER_SEAT to VehicleStore.DRIVER_SEAT.getOrDefault(
                 VehicleStore,
                 VehicleAreaSeat.SEAT_ROW_1_LEFT
@@ -254,6 +263,9 @@ class PropertyService : ICarProperty.Stub() {
                 VehicleStore,
                 0f
             )), // m/s
+
+            // on Android 13 maps requested this propertyId, has provided 0 and 1 but still not working to make maps reading vehicleInfo
+            289410887 to 0, //
 
 //            VehiclePropertyIds.INFO_FUEL_CAPACITY to 0f, //
 //            VehiclePropertyIds.EV_BATTERY_LEVEL to 48_384f, //

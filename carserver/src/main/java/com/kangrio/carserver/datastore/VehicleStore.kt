@@ -4,6 +4,9 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import com.kangrio.carserver.util.getOrDefault
+import com.kangrio.carserver.util.set
 
 object VehicleStore : DataStoreBase("vehicle") {
     val BATTERY_CAPACITY_WH = intPreferencesKey("vehicle_battery_capacity_wh")
@@ -31,4 +34,12 @@ object VehicleStore : DataStoreBase("vehicle") {
     val IGNITION_STATE = intPreferencesKey("vehicle_ignition_state")
     val PARKING_BRAKE_ON = booleanPreferencesKey("vehicle_parking_brake_on")
     val DRIVER_SEAT = intPreferencesKey("vehicle_driver_seat")
+    val VEHICLE_VIN = stringPreferencesKey("vehicle_vin")
+    val VEHICLE_NAME = stringPreferencesKey("vehicle_name")
+
+    init {
+        val vin = buildString(17) { repeat(17) { append("ABCDEFGHJKLMNPRSTUVWXYZ0123456789".random()) } }
+        VEHICLE_VIN.set(VehicleStore, VEHICLE_VIN.getOrDefault(VehicleStore, vin))
+        VEHICLE_NAME.set(VehicleStore, VEHICLE_NAME.getOrDefault(VehicleStore, "BYD ${System.currentTimeMillis().toString().substring(0, 4)}"))
+    }
 }
