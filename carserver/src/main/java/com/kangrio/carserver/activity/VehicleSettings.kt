@@ -1,14 +1,18 @@
 package com.kangrio.carserver.activity
 
 import android.car.VehicleAreaSeat
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Process
+import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -22,6 +26,8 @@ import com.kangrio.carserver.R
 import com.kangrio.carserver.datastore.VehicleStore
 import com.kangrio.carserver.util.getOrDefault
 import com.kangrio.carserver.util.set
+import org.json.JSONObject
+import java.io.File
 import kotlin.system.exitProcess
 
 class VehicleSettings : AppCompatActivity() {
@@ -32,6 +38,15 @@ class VehicleSettings : AppCompatActivity() {
     private val seatToggleGroup: MaterialButtonToggleGroup by lazy { findViewById(R.id.seatToggleGroup) }
     private val saveButton: MaterialButton by lazy { findViewById(R.id.saveButton) }
     private val vinText: TextView by lazy { findViewById(R.id.vinText) }
+
+    private val energyStatus: TextView by lazy { findViewById(R.id.energyModelStatus) }
+    private val importEnergyButton: MaterialButton by lazy { findViewById(R.id.importEnergyModelButton) }
+    private val clearEnergyButton: MaterialButton by lazy { findViewById(R.id.clearEnergyModelButton) }
+
+    private val pickEnergyModel =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            if (uri != null) importEnergyModel(uri)
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,9 +61,80 @@ class VehicleSettings : AppCompatActivity() {
         loadValues()
         setupCapacityHelper()
         saveButton.setOnClickListener { save() }
+
+        importEnergyButton.setOnClickListener {
+            try {
+                pickEnergyModel.launch(arrayOf("application/json", "text/plain", "*/*"))
+            } catch (e: ActivityNotFoundException) {
+                Toast.makeText(this, "No file picker available on this device", Toast.LENGTH_LONG).show()
+            }
+        }
+        clearEnergyButton.setOnClickListener {
+            VehicleStore.ENERGY_MODEL_PATH.set(VehicleStore, "")
+            updateEnergyStatus()
+            Toast.makeText(this, "Energy model cleared", Toast.LENGTH_SHORT).show()
+        }
     }
 
+    private fun updateEnergyStatus() {
+        val modelPath = VehicleStore.ENERGY_MODEL_PATH.getOrDefault(VehicleStore, "")
+        val hasModel = modelPath.isNotEmpty()
+        energyStatus.text = if (hasModel) {
+            "Imported: ${VehicleStore.ENERGY_MODEL_PATH.getOrDefault(VehicleStore, "custom model")}"
+        } else {
+            "Using default model"
+        }
+        clearEnergyButton.isEnabled = hasModel
+    }
+
+    private fun importEnergyModel(uri: Uri) {
+        try {
+            val text = contentResolver.openInputStream(uri)
+                ?.bufferedReader()?.use { it.readText() }
+                ?: throw IllegalStateException("Can't open file")
+
+            if (text.length > MAX_MODEL_BYTES) throw IllegalArgumentException("File too large")
+            JSONObject(text) // validate; add checks for your required fields here
+
+            val name = displayName(uri).let {
+                if (it.endsWith(".json")) it else "$it.json"
+            }
+
+            if (name == "atto3_energy_model.json") throw IllegalArgumentException("Can't overwrite default model, please rename")
+            validateEnergyModel(text)
+
+            val file = File(getExternalFilesDir(MODEL_DIR), name).apply { parentFile?.mkdirs(); createNewFile() }
+            file.writeText(text)
+
+            VehicleStore.ENERGY_MODEL_PATH.set(VehicleStore, file.absolutePath)
+            updateEnergyStatus()
+            Toast.makeText(this, "Energy model imported", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(this, "Invalid energy model: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    @Throws(IllegalArgumentException::class)
+    private fun validateEnergyModel(text: String) {
+        val jsonObject = JSONObject(text)
+        if (!jsonObject.has("vehicleInfo")) throw NoSuchFieldException("vehicleInfo not found")
+        if (!jsonObject.has("roadLoad")) throw NoSuchFieldException("roadLoad not found")
+        if (!jsonObject.has("drivetrainLosses")) throw NoSuchFieldException("drivetrainLosses not found")
+        if (!jsonObject.has("maxRegenPower")) throw NoSuchFieldException("maxRegenPower not found")
+        if (!jsonObject.has("batteryLosses")) throw NoSuchFieldException("batteryLosses not found")
+        if (!jsonObject.has("auxiliaryDrainAtTime")) throw NoSuchFieldException("auxiliaryDrainAtTime not found")
+        if (!jsonObject.has("auxiliaryDrainAtTemp")) throw NoSuchFieldException("auxiliaryDrainAtTemp not found")
+        if (!jsonObject.has("chargingCurves")) throw NoSuchFieldException("chargingCurves not found")
+    }
+
+    private fun displayName(uri: Uri): String =
+        contentResolver.query(uri, null, null, null, null)?.use { c ->
+            val i = c.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            if (i >= 0 && c.moveToFirst()) c.getString(i) else null
+        } ?: "custom model"
+
     private fun loadValues() {
+        updateEnergyStatus()
         nameInput.setText(VehicleStore.VEHICLE_NAME.getOrDefault(VehicleStore, ""))
 
         val capacity = VehicleStore.BATTERY_CAPACITY_WH.getOrDefault(VehicleStore, 0)
@@ -60,7 +146,7 @@ class VehicleSettings : AppCompatActivity() {
             if (seat == VehicleAreaSeat.SEAT_ROW_1_RIGHT) R.id.seatRightButton else R.id.seatLeftButton
         )
 
-        vinText.text = "VIN: ${VehicleStore.VEHICLE_VIN.getOrDefault(VehicleStore, "-")}"
+        vinText.text = "virtual VIN: ${VehicleStore.VEHICLE_VIN.getOrDefault(VehicleStore, "-")}"
     }
 
     private fun setupCapacityHelper() {
@@ -143,7 +229,9 @@ class VehicleSettings : AppCompatActivity() {
     }
 
     private companion object {
+        private const val MODEL_DIR = "model"
         const val MIN_CAPACITY_WH = 1_000
         const val MAX_CAPACITY_WH = 300_000
+        const val MAX_MODEL_BYTES = 1_000_000
     }
 }

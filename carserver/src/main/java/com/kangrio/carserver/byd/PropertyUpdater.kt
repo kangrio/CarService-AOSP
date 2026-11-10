@@ -84,7 +84,10 @@ class PropertyUpdater(val propertyService: PropertyService) :
                 val driverSeat = VehicleStore.DRIVER_SEAT.getOrDefault(VehicleStore, BodyworkDevice.getDriverSeat())
                 setDriverSeat(driverSeat)
 
-                val capacityWh = BatteryDevice.getBatteryCapacityWh()
+                val capacityWh = VehicleStore.BATTERY_CAPACITY_WH.getOrDefault(
+                    VehicleStore,
+                    BatteryDevice.getBatteryCapacityWh()
+                )
                 VehicleStore.BATTERY_CAPACITY_WH.set(VehicleStore, capacityWh)
 
                 val batteryLevelPercent = BatteryDevice.getBatteryLevelPercent()

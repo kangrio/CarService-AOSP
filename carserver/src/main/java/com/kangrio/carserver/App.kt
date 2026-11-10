@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import com.kangrio.carserver.datastore.SettingsStore
 import com.kangrio.carserver.datastore.VehicleStore
+import com.kangrio.carserver.provider.EnergyModelFactory
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 
 
@@ -37,6 +38,7 @@ class App : Application() {
         CrashHandler.install(this)
         SettingsStore.init(this)
         VehicleStore.init(this)
+        EnergyModelFactory.init()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             HiddenApiBypass.addHiddenApiExemptions("")
         }

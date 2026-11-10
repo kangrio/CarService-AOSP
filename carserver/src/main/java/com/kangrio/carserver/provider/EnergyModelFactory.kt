@@ -1,5 +1,6 @@
 package com.kangrio.carserver.provider
 
+import android.widget.Toast
 import androidx.core.net.toUri
 import com.google.maps.automotive.proto.FloatWithUncertainty
 import com.google.maps.automotive.proto.IntWithUncertainty
@@ -38,8 +39,15 @@ class EnergyModelFactory private constructor() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private fun initInternal() {
-        modelFile = File(appContext.getExternalFilesDir(MODEL_DIR), MODEL_FILE_NAME)
+        val defaultEnergyModel = File(appContext.getExternalFilesDir(MODEL_DIR), MODEL_FILE_NAME)
+        val customEnergyModel = VehicleStore.ENERGY_MODEL_PATH.getOrDefault(VehicleStore, "")
+        val usedModelFile: File = if (customEnergyModel.isEmpty()) {
+            defaultEnergyModel
+        } else {
+            File(customEnergyModel)
+        }
 
+        modelFile = usedModelFile
         ensureModelFile()
 
         vehicleEnergyModel = loadModel()
@@ -149,6 +157,7 @@ class EnergyModelFactory private constructor() {
             }.build()
         }.getOrElse {
             LogUtils.e(TAG, "load model failed", it)
+            Toast.makeText(appContext, "load model failed ${it.message}", Toast.LENGTH_LONG).show()
             VehicleEnergyModel.newBuilder().build()
         }
     }
@@ -235,11 +244,11 @@ class EnergyModelFactory private constructor() {
         private const val MODEL_URI = "content://kangrio_google_maps_energy/model"
 
         private val instance: EnergyModelFactory by lazy {
-            EnergyModelFactory().apply { initInternal() }
+            EnergyModelFactory()
         }
 
         fun init() {
-            instance
+            instance.initInternal()
         }
 
         fun getEnergyModel(): VehicleEnergyModel = instance.vehicleEnergyModel
