@@ -2,6 +2,7 @@ package com.kangrio.carserver.service
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -12,6 +13,7 @@ import android.os.Looper
 import androidx.core.app.NotificationCompat
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import com.kangrio.carserver.MainActivity
 import com.kangrio.carserver.R
 import com.kangrio.carserver.car.CarServer
 import com.kangrio.carserver.datastore.SettingsStore
@@ -62,7 +64,15 @@ class CarService : Service() {
                 .createNotificationChannel(channel)
         }
 
+        val pendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            Intent(this, MainActivity::class.java),
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
         val notification = NotificationCompat.Builder(this, channelId)
+            .setContentIntent(pendingIntent)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle(getString(R.string.app_name))
             .setContentText("Running")
