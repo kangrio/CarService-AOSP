@@ -3,7 +3,10 @@ package com.kangrio.carserver.util
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.datastore.preferences.core.Preferences
 import com.kangrio.carserver.datastore.DataStoreBase
 
@@ -41,3 +44,25 @@ fun <T> Preferences.Key<T>.set(
     store: DataStoreBase,
     value: T
 ) = store.setValue(this, value)
+
+fun View.applySystemBarInsets(
+    type: Int = WindowInsetsCompat.Type.systemBars()
+) {
+    val initialLeft = paddingLeft
+    val initialTop = paddingTop
+    val initialRight = paddingRight
+    val initialBottom = paddingBottom
+
+    ViewCompat.setOnApplyWindowInsetsListener(this) { view, insets ->
+        val bars = insets.getInsets(type)
+
+        view.setPadding(
+            initialLeft + bars.left,
+            initialTop + bars.top,
+            initialRight + bars.right,
+            initialBottom + bars.bottom
+        )
+
+        insets
+    }
+}

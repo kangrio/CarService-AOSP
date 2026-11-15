@@ -69,6 +69,10 @@ dependencies {
     implementation("androidx.work:work-runtime:2.11.2")
     implementation("androidx.datastore:datastore-preferences:1.2.1")
 
+    implementation(libs.okhttp)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.constraintlayout)

@@ -13,6 +13,8 @@
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
     <permission
         android:name="com.kangrio.carservice.permission.CAR_DISPLAY_IN_CLUSTER"
         android:protectionLevel="normal" />
@@ -107,5 +109,15 @@
             android:authorities="kangrio_google_maps_energy;kangrio_google_maps_settings;kangrio_google_maps_assisted_driving;kangrio_google_maps_vehicle_profile"
             android:enabled="true"
             android:exported="true" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 </manifest>

@@ -9,14 +9,13 @@ import android.os.Process
 import android.provider.OpenableColumns
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.textfield.TextInputEditText
@@ -24,6 +23,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.kangrio.carserver.MainActivity
 import com.kangrio.carserver.R
 import com.kangrio.carserver.datastore.VehicleStore
+import com.kangrio.carserver.util.applySystemBarInsets
 import com.kangrio.carserver.util.getOrDefault
 import com.kangrio.carserver.util.set
 import org.json.JSONObject
@@ -52,11 +52,7 @@ class VehicleSettings : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_vehicle_settings)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.vehicleSettings)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+        findViewById<View>(R.id.vehicleSettings).applySystemBarInsets()
 
         loadValues()
         setupCapacityHelper()
