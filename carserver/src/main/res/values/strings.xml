@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Car Server</string>
+    <string name="app_name">Car Service</string>
 
     <string name="help_text">Sends EV telemetry to A Better Routeplanner every 10 seconds.</string>
     <string name="abrp_api_key">ABRP API key</string>

@@ -54,7 +54,7 @@ class CarService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 channelId,
-                "Car Server",
+                getString(R.string.app_name),
                 NotificationManager.IMPORTANCE_LOW
             )
 
@@ -64,7 +64,7 @@ class CarService : Service() {
 
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle("Car Server")
+            .setContentTitle(getString(R.string.app_name))
             .setContentText("Running")
             .setOngoing(true)
             .build()
