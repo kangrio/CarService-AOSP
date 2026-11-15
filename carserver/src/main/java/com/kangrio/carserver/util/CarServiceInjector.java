@@ -42,6 +42,19 @@ public class CarServiceInjector {
         }
     }
 
+    public static IBinder getService() {
+        try {
+            Class<?> carServiceClass = Class.forName("android.os.ServiceManager");
+            Field sCacheField = carServiceClass.getDeclaredField("sCache");
+            sCacheField.setAccessible(true);
+            Map<String, IBinder> cache = (Map<String, IBinder>) sCacheField.get(null);
+            return cache.get("car_service");
+        } catch (Throwable e) {
+            LogUtils.INSTANCE.e("CarServiceInjecter", "inject failed", e);
+            return null;
+        }
+    }
+
     @SuppressWarnings("unused")
     public static void inject(Context context) {
         Intent intent = new Intent("android.car.ICar");

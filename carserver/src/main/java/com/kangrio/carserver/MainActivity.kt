@@ -10,11 +10,14 @@ import androidx.core.view.WindowInsetsCompat
 import com.kangrio.carserver.activity.AbrpSettings
 import com.kangrio.carserver.activity.PermissionActivity
 import com.kangrio.carserver.activity.VehicleSettings
+import com.kangrio.carserver.dialog.DebugDialog
 import com.kangrio.carserver.util.hasLocationPermission
 
 class MainActivity :AppCompatActivity() {
     private val abrpSettingsButton: Button by lazy { findViewById(R.id.abrpSettingsButton) }
     private val vehicleSettingsButton: Button by lazy { findViewById(R.id.vehicleSettingsButton) }
+    private val debugButton: Button by lazy { findViewById(R.id.debugButton) }
+    private var debugDialog: DebugDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +36,7 @@ class MainActivity :AppCompatActivity() {
 
         setAbrpSettingsButton()
         setVehicleSettingsButton()
+        setupDebugButton()
     }
 
     fun setAbrpSettingsButton() {
@@ -45,5 +49,18 @@ class MainActivity :AppCompatActivity() {
         vehicleSettingsButton.setOnClickListener {
             startActivity(Intent(this, VehicleSettings::class.java))
         }
+    }
+
+    fun setupDebugButton() {
+        debugButton.setOnClickListener {
+            debugDialog = DebugDialog(this).apply {
+                show()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        debugDialog?.dismiss()
+        super.onDestroy()
     }
 }
