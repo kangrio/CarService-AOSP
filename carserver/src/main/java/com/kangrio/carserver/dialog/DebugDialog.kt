@@ -2,6 +2,7 @@ package com.kangrio.carserver.dialog
 
 import android.content.Context
 import android.content.DialogInterface
+import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.os.Build
 import android.widget.FrameLayout
@@ -17,6 +18,13 @@ class DebugDialog(context: Context) : AlertDialog(context) {
         textSize = 13f
         typeface = Typeface.MONOSPACE
         text = "Loading debug information..."
+    }
+    private var updatedOn = 0L
+
+    private val onSharedPreferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+        if (System.currentTimeMillis() - updatedOn < 1000) return@OnSharedPreferenceChangeListener
+        updatedOn = System.currentTimeMillis()
+        showData()
     }
 
     init {
@@ -38,6 +46,7 @@ class DebugDialog(context: Context) : AlertDialog(context) {
 
     override fun onStart() {
         super.onStart()
+        VehicleStore.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener)
         showData()
     }
 
@@ -45,11 +54,16 @@ class DebugDialog(context: Context) : AlertDialog(context) {
         textView.text = getDebugInfo()
     }
 
+    override fun onDetachedFromWindow() {
+        VehicleStore.unregisterOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener)
+        super.onDetachedFromWindow()
+    }
+
     private fun getDebugInfo(): String {
         return buildString {
             val allInfo = VehicleStore.getAllValue()
             appendLine("========== VEHICLE ==========")
-            allInfo.forEach { (key, value) ->
+            allInfo.toSortedMap { key, key1 -> key.toString().compareTo(key1.toString()) }.forEach { (key, value) ->
                 appendLine("$key: $value")
             }
 
