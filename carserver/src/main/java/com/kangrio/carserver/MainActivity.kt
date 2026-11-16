@@ -9,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.kangrio.carserver.activity.AbrpSettings
 import com.kangrio.carserver.activity.PermissionActivity
+import com.kangrio.carserver.activity.SelfCheckActivity
 import com.kangrio.carserver.activity.VehicleSettings
 import com.kangrio.carserver.data.ReleaseInfo
 import com.kangrio.carserver.dialog.DebugDialog
@@ -23,6 +24,8 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private val selfCheckButton: Button by lazy { findViewById(R.id.selfCheckButton) }
+    private val openMapsButton: Button by lazy { findViewById(R.id.openMapsButton) }
     private val abrpSettingsButton: Button by lazy { findViewById(R.id.abrpSettingsButton) }
     private val vehicleSettingsButton: Button by lazy { findViewById(R.id.vehicleSettingsButton) }
     private val debugButton: Button by lazy { findViewById(R.id.debugButton) }
@@ -42,6 +45,8 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        setSelfCheckButton()
+        setOpenMapsButton()
         setAbrpSettingsButton()
         setVehicleSettingsButton()
         setupDebugButton()
@@ -67,6 +72,23 @@ class MainActivity : AppCompatActivity() {
                 apkName = otaName ?: "app.apk"
             )
             showUpdateDialog()
+        }
+    }
+
+    fun setSelfCheckButton() {
+        selfCheckButton.setOnClickListener {
+            startActivity(Intent(this, SelfCheckActivity::class.java))
+        }
+    }
+
+    fun setOpenMapsButton() {
+        openMapsButton.setOnClickListener {
+            val intent = packageManager.getLaunchIntentForPackage("com.google.android.apps.maps")
+            if (intent == null) {
+                Toast.makeText(this, "Google Maps not found", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            startActivity(intent)
         }
     }
 

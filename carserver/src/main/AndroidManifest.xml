@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 
     <permission
         android:name="com.kangrio.carservice.permission.CAR_DISPLAY_IN_CLUSTER"
@@ -74,6 +75,7 @@
         </activity>
 
         <activity android:name=".activity.PermissionActivity" />
+        <activity android:name=".activity.SelfCheckActivity" />
         <activity android:name=".activity.VehicleSettings" />
         <activity android:name=".activity.AbrpSettings" />
         <activity android:name=".activity.CrashReportActivity" />
