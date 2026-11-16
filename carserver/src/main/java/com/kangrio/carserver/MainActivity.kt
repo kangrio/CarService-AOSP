@@ -20,7 +20,10 @@ import com.kangrio.carserver.util.hasLocationPermission
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 class MainActivity : AppCompatActivity() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -115,6 +118,14 @@ class MainActivity : AppCompatActivity() {
     fun setupCheckOtaButton() {
         checkOtaButton.setOnClickListener {
             scope.launch {
+                val job = launch {
+                    var dots = 1
+                    while (this.isActive) {
+                        checkOtaButton.text = "Checking" + ".".repeat(dots) + " ".repeat(4 - dots)
+                        dots = (dots + 1) % 4
+                        delay(500.milliseconds)
+                    }
+                }
                 val release = OtaUpdater.checkForUpdate(this@MainActivity, force = true)
                 if (release != null) {
                     availableUpdate = release
@@ -123,6 +134,8 @@ class MainActivity : AppCompatActivity() {
                     val msg = "${getString(R.string.app_name)} is up-to-date (v${OtaUpdater.getCurrentVersionName(this@MainActivity)})"
                     Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
                 }
+                job.cancel()
+                checkOtaButton.text = "Check update"
             }
         }
     }
