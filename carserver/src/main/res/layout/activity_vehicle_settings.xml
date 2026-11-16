@@ -229,7 +229,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="2dp"
-                        android:text="Which side the driver sits on (requires app restart)"
+                        android:text="Which side the driver sits on"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                         android:alpha="0.7" />
 
