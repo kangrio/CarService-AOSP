@@ -53,6 +53,7 @@ class VehicleSettings : AppCompatActivity() {
         "CCS1" to EvChargingConnectorType.IEC_TYPE_1_CCS_DC.toByte(),
         "Type 2 AC" to EvChargingConnectorType.IEC_TYPE_2_AC.toByte(),
         "CCS2" to EvChargingConnectorType.IEC_TYPE_2_CCS_DC.toByte(),
+        "Tesla" to EvChargingConnectorType.TESLA_ROADSTER.toByte(),
         "Type 3 AC" to EvChargingConnectorType.IEC_TYPE_3_AC.toByte(),
         "CHAdeMO" to EvChargingConnectorType.IEC_TYPE_4_DC.toByte(),
         "GBT AC" to EvChargingConnectorType.GBT_AC.toByte(),
