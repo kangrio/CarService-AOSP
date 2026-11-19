@@ -15,6 +15,7 @@ import com.kangrio.carserver.App
 import com.kangrio.carserver.byd.battery.BatteryDevice
 import com.kangrio.carserver.byd.bodywork.BodyworkDevice
 import com.kangrio.carserver.byd.charging.ChargingDevice
+import com.kangrio.carserver.byd.light.LightDevice
 import com.kangrio.carserver.byd.speed.SpeedDevice
 import com.kangrio.carserver.car.service.property.IPropertyUpdater
 import com.kangrio.carserver.car.service.property.PropertyService
@@ -81,6 +82,9 @@ class PropertyUpdater(val propertyService: PropertyService) :
     fun collectInitialValue() {
         if (BydServices.supportAutoService) {
             try {
+                val lowBeamStateOn = LightDevice.isLowBeamStateOn()
+                VehicleStore.VEHICLE_LOW_BEAM_STATE_ON.set(VehicleStore, lowBeamStateOn)
+
                 val driverSeat = VehicleStore.DRIVER_SEAT.getOrDefault(VehicleStore, BodyworkDevice.getDriverSeat())
                 setDriverSeat(driverSeat)
 
@@ -170,6 +174,7 @@ class PropertyUpdater(val propertyService: PropertyService) :
 
     fun registerListener() {
         if (!BydServices.supportAutoService) return
+        unregisterListener()
         bYDAutoManager?.registerListener(this)
         bYDAutoManager?.enableDevice(
             BYDAutoConstants.BYDAUTO_DEVICE_BODYWORK, intArrayOf(
@@ -200,6 +205,11 @@ class PropertyUpdater(val propertyService: PropertyService) :
                 BYDAutoFeatureIds.SPEED_AUTO_SPEED
             )
         )
+        bYDAutoManager?.enableDevice(
+            BYDAutoConstants.BYDAUTO_DEVICE_LIGHT, intArrayOf(
+                BYDAutoFeatureIds.LIGHT_LOW_BEAM_LIGHT
+            )
+        )
     }
 
     fun unregisterListener() {
@@ -210,6 +220,7 @@ class PropertyUpdater(val propertyService: PropertyService) :
         bYDAutoManager?.disableDevice(BYDAutoConstants.BYDAUTO_DEVICE_POWER)
         bYDAutoManager?.disableDevice(BYDAutoConstants.BYDAUTO_DEVICE_SPEED)
         bYDAutoManager?.disableDevice(BYDAutoConstants.BYDAUTO_DEVICE_STATISTIC)
+        bYDAutoManager?.disableDevice(BYDAutoConstants.BYDAUTO_DEVICE_LIGHT)
         bYDAutoManager?.unregisterListener(this)
     }
 
@@ -346,6 +357,10 @@ class PropertyUpdater(val propertyService: PropertyService) :
 
             BYDAutoFeatureIds.STATISTIC_REMAINING_BATTERY_POWER -> {
                 setBatteryLevelPercent(value.toFloat() / 10)
+            }
+
+            BYDAutoFeatureIds.LIGHT_LOW_BEAM_LIGHT -> {
+                VehicleStore.VEHICLE_LOW_BEAM_STATE_ON.set(VehicleStore, LightDevice.isLowBeamStateOn())
             }
         }
     }

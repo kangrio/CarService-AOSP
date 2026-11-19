@@ -2,6 +2,7 @@ package com.kangrio.carserver.provider
 
 import android.content.ContentProvider
 import android.content.ContentValues
+import android.content.SharedPreferences
 import android.database.Cursor
 import android.net.Uri
 import android.os.CancellationSignal
@@ -13,16 +14,14 @@ import com.google.maps.automotive.proto.AssistedDrivingProfileOuterClass
 import com.google.maps.automotive.proto.AssistedDrivingState
 import com.google.maps.automotive.proto.AutoAddChargingStopsSettings
 import com.google.maps.automotive.proto.CenterDisplayScreenSettings
-import com.google.maps.automotive.proto.CustomStyleSettings
 import com.google.maps.automotive.proto.DisplayScaling
 import com.google.maps.automotive.proto.EvTripSettings
 import com.google.maps.automotive.proto.FeatureSuppression
-import com.google.maps.automotive.proto.InstrumentClusterSettings
 import com.google.maps.automotive.proto.MapsSettings
 import com.google.maps.automotive.proto.PaymentNetworkSettings
 import com.google.maps.automotive.proto.StateOfChargeSettings
-import com.google.maps.automotive.proto.Theme
 import com.google.maps.automotive.proto.TouchScreenInteractability
+import com.kangrio.carserver.datastore.VehicleStore
 import com.kangrio.carserver.util.LogUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +32,12 @@ import kotlinx.coroutines.launch
 class MapsProvider : ContentProvider() {
 
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+
+    private val onSharedPreferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+        if (key == VehicleStore.VEHICLE_LOW_BEAM_STATE_ON.name) {
+            context?.contentResolver?.notifyChange(MAPS_SETTING_URI, null)
+        }
+    }
 
     override fun delete(
         p0: Uri,
@@ -55,6 +60,7 @@ class MapsProvider : ContentProvider() {
 
     override fun onCreate(): Boolean {
         LogUtils.d("MapsProvider", "onCreate:calling:${callingPackage}")
+        VehicleStore.registerOnSharedPreferenceChangeListener(onSharedPreferenceChangeListener)
         return true
     }
 
@@ -89,46 +95,6 @@ class MapsProvider : ContentProvider() {
                 else -> return null
             }
 
-//            "kangrio_google_maps_vehicle_profile" -> when (uri.path) {
-//                "/content" -> AssistedDrivingProfileOuterClass
-//                    .AssistedDrivingProfile
-//                    .newBuilder()
-//                    .build()
-//                else -> return null
-//            }
-//
-//            "kangrio_google_maps_settings" -> when (uri.path) {
-//                "/content" ->
-//                    MapsSettings
-//                        .newBuilder()
-//                        .build()
-//
-//                "/ev_trip" -> EvTripSettings
-//                    .newBuilder()
-//                    .build()
-//
-//                "/ev_payment_network" -> PaymentNetworkSettings
-//                    .newBuilder()
-//                    .build()
-//
-//                else -> return null
-//            }
-//
-//            "kangrio_google_maps_assisted_driving" -> when (uri.path) {
-//                "/profile" -> AssistedDrivingProfileOuterClass.AssistedDrivingProfile
-//                    .newBuilder()
-//                    .build()
-//
-//                "/state" -> AssistedDrivingState
-//                    .newBuilder()
-//                    .setState(
-//                        AssistedDrivingState.State.AVAILABLE
-//                    )
-//                    .build()
-//
-//                else -> return null
-//            }
-
             "kangrio_google_maps_vehicle_profile" -> when (uri.path) {
                 "/content" -> AssistedDrivingProfileOuterClass
                     .AssistedDrivingProfile
@@ -151,10 +117,7 @@ class MapsProvider : ContentProvider() {
                     .setCenterDisplayScreenSettings(
                         CenterDisplayScreenSettings.newBuilder()
                             .setTheme(
-                                Theme.newBuilder()
-                                    .setDarkMode(Theme.DarkMode.SYSTEM)
-                                    .setMapsStyle(Theme.Style.STANDARD)
-                                    .setTurnCardStyle(Theme.Style.STANDARD)
+                                MapsStyle.getMapsTheme()
                             )
                             .setLimitedWidgetSettings(
                                 CenterDisplayScreenSettings.LimitedWidgetSettings.newBuilder()
@@ -180,32 +143,6 @@ class MapsProvider : ContentProvider() {
                                 DisplayScaling.newBuilder()
                                     .setDisplayMagnification(1.0f)
                             )
-                    )
-                    .setInstrumentClusterSettings(
-                        InstrumentClusterSettings.newBuilder()
-                            .setTheme(
-                                Theme.newBuilder()
-                                    .setMapsStyle(Theme.Style.STANDARD)
-                                    .setTurnCardStyle(Theme.Style.STANDARD)
-                                    .setDarkMode(Theme.DarkMode.SYSTEM)
-                            )
-                            .setCamera(InstrumentClusterSettings.Camera.DEFAULT_CAMERA_TYPE)
-                            .setFeatureSet(InstrumentClusterSettings.FeatureSet.DEFAULT_MAP_ONLY)
-                            .setDisplayScaling(
-                                DisplayScaling.newBuilder()
-                                    .setDisplayMagnification(1.0f)
-                            )
-                            .setTurnCardSettings(
-                                InstrumentClusterSettings.TurnCardSettings.newBuilder()
-                                    .setDisplayScaling(
-                                        DisplayScaling.newBuilder()
-                                            .setDisplayMagnification(1.0f)
-                                    )
-                            )
-                    )
-                    .setCustomStyleSettings(
-                        CustomStyleSettings.newBuilder()
-                            .setCustomStyleId("")
                     )
                     .setAdditionalFeatureSettings(
                         AdditionalFeatureSettings.newBuilder()
@@ -296,5 +233,9 @@ class MapsProvider : ContentProvider() {
     ): Int {
         LogUtils.d("MapsProvider", "update:calling:${callingPackage}")
         return 0
+    }
+
+    companion object {
+        val MAPS_SETTING_URI = "content://kangrio_google_maps_settings/content".toUri()
     }
 }

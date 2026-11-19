@@ -106,6 +106,8 @@ class SimulatorUpdater(val propertyUpdater: PropertyUpdater) {
                 VehicleStore.CHARGE_RATE_WH.set(VehicleStore, (power * 1000).toInt())
                 propertyUpdater.setBatteryLevelPercent(batteryPercent)
                 propertyUpdater.setConsumptionWhPer100km(consumptionWhPer100Km.toInt())
+                val headLightOn = VehicleStore.VEHICLE_LOW_BEAM_STATE_ON.getOrDefault(VehicleStore, false)
+                VehicleStore.VEHICLE_LOW_BEAM_STATE_ON.set(VehicleStore, !headLightOn)
                 delay(updateIntervalMs.milliseconds)
             }
         }

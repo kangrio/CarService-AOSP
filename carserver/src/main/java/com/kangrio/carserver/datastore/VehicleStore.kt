@@ -38,11 +38,14 @@ object VehicleStore : DataStoreBase("vehicle") {
     val VEHICLE_VIN = stringPreferencesKey("vehicle_vin")
     val VEHICLE_NAME = stringPreferencesKey("vehicle_name")
     val ENERGY_MODEL_PATH = stringPreferencesKey("vehicle_energy_model_json")
+    val VEHICLE_LOW_BEAM_STATE_ON = booleanPreferencesKey("vehicle_low_beam_state_on")
+    val MAPS_STYLE = stringPreferencesKey("vehicle_maps_style")
 
     override fun init(context: Context) {
         super.init(context)
         val vin = buildString(17) { repeat(17) { append("ABCDEFGHJKLMNPRSTUVWXYZ0123456789".random()) } }
         VEHICLE_VIN.set(VehicleStore, VEHICLE_VIN.getOrDefault(VehicleStore, vin))
         VEHICLE_NAME.set(VehicleStore, VEHICLE_NAME.getOrDefault(VehicleStore, "BYD ${vin.substring(0, 4)}"))
+        MAPS_STYLE.set(VehicleStore, MAPS_STYLE.getOrDefault(VehicleStore, "auto"))
     }
 }

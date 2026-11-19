@@ -23,6 +23,8 @@ import com.google.android.material.textfield.TextInputLayout
 import com.kangrio.carserver.MainActivity
 import com.kangrio.carserver.R
 import com.kangrio.carserver.datastore.VehicleStore
+import com.kangrio.carserver.provider.MapsProvider
+import com.kangrio.carserver.provider.MapsStyle
 import com.kangrio.carserver.util.applySystemBarInsets
 import com.kangrio.carserver.util.getOrDefault
 import com.kangrio.carserver.util.set
@@ -42,6 +44,7 @@ class VehicleSettings : AppCompatActivity() {
     private val energyStatus: TextView by lazy { findViewById(R.id.energyModelStatus) }
     private val importEnergyButton: MaterialButton by lazy { findViewById(R.id.importEnergyModelButton) }
     private val clearEnergyButton: MaterialButton by lazy { findViewById(R.id.clearEnergyModelButton) }
+    private val mapsStyleToggleGroup: MaterialButtonToggleGroup by lazy { findViewById(R.id.mapsStyleToggleGroup) }
 
     private val pickEnergyModel =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
@@ -141,6 +144,15 @@ class VehicleSettings : AppCompatActivity() {
         seatToggleGroup.check(
             if (seat == VehicleAreaSeat.SEAT_ROW_1_RIGHT) R.id.seatRightButton else R.id.seatLeftButton
         )
+        val mapsStyle = VehicleStore.MAPS_STYLE.getOrDefault(VehicleStore, MapsStyle.AUTO)
+        mapsStyleToggleGroup.check(
+            when (mapsStyle) {
+                MapsStyle.BEAM -> R.id.mapsStyleBeamButton
+                MapsStyle.DARK -> R.id.mapsStyleDarkButton
+                MapsStyle.LIGHT -> R.id.mapsStyleLightButton
+                else -> R.id.mapsStyleAutoButton
+            }
+        )
 
         vinText.text = "virtual VIN: ${VehicleStore.VEHICLE_VIN.getOrDefault(VehicleStore, "-")}"
     }
@@ -180,6 +192,22 @@ class VehicleSettings : AppCompatActivity() {
             VehicleAreaSeat.SEAT_ROW_1_LEFT
         }
 
+    private fun selectedMapsStyle(): String =
+        when (mapsStyleToggleGroup.checkedButtonId) {
+            R.id.mapsStyleBeamButton -> {
+                MapsStyle.BEAM
+            }
+            R.id.mapsStyleDarkButton -> {
+                MapsStyle.DARK
+            }
+            R.id.mapsStyleLightButton -> {
+                MapsStyle.LIGHT
+            }
+            else -> {
+                MapsStyle.AUTO
+            }
+        }
+
     private fun save() {
         val name = nameInput.text?.toString()?.trim().orEmpty()
         val capacity = capacityInput.text?.toString()?.toIntOrNull()
@@ -196,12 +224,14 @@ class VehicleSettings : AppCompatActivity() {
         if (!valid) return
 
         val seat = selectedSeat()
+        val mapsStyle = selectedMapsStyle()
         VehicleStore.VEHICLE_NAME.set(VehicleStore, name)
         VehicleStore.BATTERY_CAPACITY_WH.set(VehicleStore, capacity!!)
         VehicleStore.DRIVER_SEAT.set(VehicleStore, seat)
+        VehicleStore.MAPS_STYLE.set(VehicleStore, mapsStyle)
 
-        showRestartDialog()
         Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show()
+        contentResolver?.notifyChange(MapsProvider.MAPS_SETTING_URI, null)
     }
 
     private fun showRestartDialog() {
