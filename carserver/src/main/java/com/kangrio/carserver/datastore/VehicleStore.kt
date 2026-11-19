@@ -1,7 +1,9 @@
 package com.kangrio.carserver.datastore
 
+import android.car.hardware.property.EvChargingConnectorType
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.byteArrayPreferencesKey
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -40,6 +42,7 @@ object VehicleStore : DataStoreBase("vehicle") {
     val ENERGY_MODEL_PATH = stringPreferencesKey("vehicle_energy_model_json")
     val VEHICLE_LOW_BEAM_STATE_ON = booleanPreferencesKey("vehicle_low_beam_state_on")
     val MAPS_STYLE = stringPreferencesKey("vehicle_maps_style")
+    val VEHICLE_PLUG_TYPES = byteArrayPreferencesKey("vehicle_plug_types")
 
     override fun init(context: Context) {
         super.init(context)
@@ -47,5 +50,10 @@ object VehicleStore : DataStoreBase("vehicle") {
         VEHICLE_VIN.set(VehicleStore, VEHICLE_VIN.getOrDefault(VehicleStore, vin))
         VEHICLE_NAME.set(VehicleStore, VEHICLE_NAME.getOrDefault(VehicleStore, "BYD ${vin.substring(0, 4)}"))
         MAPS_STYLE.set(VehicleStore, MAPS_STYLE.getOrDefault(VehicleStore, "auto"))
+        val plugTypes = byteArrayOf(
+            EvChargingConnectorType.IEC_TYPE_2_AC.toByte(),
+            EvChargingConnectorType.IEC_TYPE_2_CCS_DC.toByte()
+        )
+        VEHICLE_PLUG_TYPES.set(VehicleStore, VEHICLE_PLUG_TYPES.getOrDefault(VehicleStore, plugTypes))
     }
 }

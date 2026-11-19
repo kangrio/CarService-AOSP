@@ -1,6 +1,7 @@
 package com.kangrio.carserver.activity
 
 import android.car.VehicleAreaSeat
+import android.car.hardware.property.EvChargingConnectorType
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
@@ -18,12 +19,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.kangrio.carserver.MainActivity
 import com.kangrio.carserver.R
 import com.kangrio.carserver.datastore.VehicleStore
-import com.kangrio.carserver.provider.MapsProvider
 import com.kangrio.carserver.provider.MapsStyle
 import com.kangrio.carserver.util.applySystemBarInsets
 import com.kangrio.carserver.util.getOrDefault
@@ -45,6 +46,22 @@ class VehicleSettings : AppCompatActivity() {
     private val importEnergyButton: MaterialButton by lazy { findViewById(R.id.importEnergyModelButton) }
     private val clearEnergyButton: MaterialButton by lazy { findViewById(R.id.clearEnergyModelButton) }
     private val mapsStyleToggleGroup: MaterialButtonToggleGroup by lazy { findViewById(R.id.mapsStyleToggleGroup) }
+    private val plugTypesButton: MaterialButton by lazy { findViewById(R.id.plugTypesButton) }
+
+    private val plugTypes = mapOf(
+        "Type 1 AC" to EvChargingConnectorType.IEC_TYPE_1_AC.toByte(),
+        "CCS1" to EvChargingConnectorType.IEC_TYPE_1_CCS_DC.toByte(),
+        "Type 2 AC" to EvChargingConnectorType.IEC_TYPE_2_AC.toByte(),
+        "CCS2" to EvChargingConnectorType.IEC_TYPE_2_CCS_DC.toByte(),
+        "Type 3 AC" to EvChargingConnectorType.IEC_TYPE_3_AC.toByte(),
+        "CHAdeMO" to EvChargingConnectorType.IEC_TYPE_4_DC.toByte(),
+        "GBT AC" to EvChargingConnectorType.GBT_AC.toByte(),
+        "GBT DC" to EvChargingConnectorType.GBT_DC.toByte(),
+        "NACS (AC)" to EvChargingConnectorType.SAE_J3400_AC.toByte(),
+        "NACS (DC)" to EvChargingConnectorType.SAE_J3400_DC.toByte(),
+        "Other" to EvChargingConnectorType.OTHER.toByte(),
+        "Unknown" to EvChargingConnectorType.UNKNOWN.toByte()
+    )
 
     private val pickEnergyModel =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
@@ -59,8 +76,18 @@ class VehicleSettings : AppCompatActivity() {
 
         loadValues()
         setupCapacityHelper()
-        saveButton.setOnClickListener { save() }
+        setupSaveButton()
+        setupImportEnergyButton()
 
+        setupClearEnergyButton()
+        setupPlugTypesButton()
+    }
+
+    private fun setupSaveButton() {
+        saveButton.setOnClickListener { save() }
+    }
+
+    private fun setupImportEnergyButton() {
         importEnergyButton.setOnClickListener {
             try {
                 pickEnergyModel.launch(arrayOf("application/json", "text/plain", "*/*"))
@@ -68,11 +95,51 @@ class VehicleSettings : AppCompatActivity() {
                 Toast.makeText(this, "No file picker available on this device", Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    private fun setupClearEnergyButton() {
         clearEnergyButton.setOnClickListener {
             VehicleStore.ENERGY_MODEL_PATH.set(VehicleStore, "")
             updateEnergyStatus()
             Toast.makeText(this, "Energy model cleared", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun setupPlugTypesButton() {
+        plugTypesButton.setOnClickListener {
+            val selectedTypes = VehicleStore.VEHICLE_PLUG_TYPES.getOrDefault(VehicleStore, byteArrayOf())
+            showPlugTypeDialog(selectedTypes.toSet()) {
+                VehicleStore.VEHICLE_PLUG_TYPES.set(VehicleStore, it.toByteArray())
+            }
+        }
+    }
+
+    private fun showPlugTypeDialog(
+        selectedTypes: Set<Byte>,
+        onSelectionChanged: (Set<Byte>) -> Unit
+    ) {
+        val entries = plugTypes.entries.toList()
+        val checkedItems = BooleanArray(entries.size) { index ->
+            entries[index].value in selectedTypes
+        }
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Select plug types")
+            .setMultiChoiceItems(
+                entries.map { it.key }.toTypedArray(),
+                checkedItems
+            ) { _, which, isChecked ->
+                checkedItems[which] = isChecked
+            }
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("OK") { _, _ ->
+                val result = entries.mapIndexedNotNull { index, entry ->
+                    if (checkedItems[index]) entry.value else null
+                }.toSet()
+
+                onSelectionChanged(result)
+            }
+            .show()
     }
 
     private fun updateEnergyStatus() {

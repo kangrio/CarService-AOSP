@@ -217,13 +217,17 @@ class PropertyService : ICarProperty.Stub() {
             VehicleStore,
             "BYD ${vin.substring(0, 4)}"
         )
+        val plugTypes = VehicleStore.VEHICLE_PLUG_TYPES.getOrDefault(
+            VehicleStore,
+            byteArrayOf(
+                EvChargingConnectorType.IEC_TYPE_2_AC.toByte(),
+                EvChargingConnectorType.IEC_TYPE_2_CCS_DC.toByte()
+            )
+        )
+
         return linkedMapOf(
             VehiclePropertyIds.INFO_MODEL_YEAR to 2023,
             VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY to PropertyUpdater.DEFAULT_BATTERY_CAPACITY_WH,
-            VehiclePropertyIds.INFO_EV_CONNECTOR_TYPE to arrayOf(
-                Integer.valueOf(EvChargingConnectorType.IEC_TYPE_2_AC),
-                Integer.valueOf(EvChargingConnectorType.IEC_TYPE_2_CCS_DC)
-            ),
             VehiclePropertyIds.INFO_EV_PORT_LOCATION to PortLocationType.FRONT_RIGHT,
             VehiclePropertyIds.INFO_FUEL_TYPE to arrayOf(Integer.valueOf(FuelType.ELECTRIC)),
 
@@ -231,6 +235,7 @@ class PropertyService : ICarProperty.Stub() {
             VehiclePropertyIds.INFO_VIN to vehicleVin,
             VehiclePropertyIds.INFO_MAKE to vehicleName,
             VehiclePropertyIds.INFO_MODEL to vehicleName,
+            VehiclePropertyIds.INFO_EV_CONNECTOR_TYPE to plugTypes.map { Integer.valueOf(it.toInt()) }.toTypedArray(),
             VehiclePropertyIds.INFO_DRIVER_SEAT to VehicleStore.DRIVER_SEAT.getOrDefault(
                 VehicleStore,
                 VehicleAreaSeat.SEAT_ROW_1_LEFT

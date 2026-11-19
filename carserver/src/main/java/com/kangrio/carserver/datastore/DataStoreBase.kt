@@ -143,6 +143,7 @@ open class DataStoreBase(val name: String) {
             is Double -> prefs[key as Preferences.Key<Double>] = value
             is Boolean -> prefs[key as Preferences.Key<Boolean>] = value
             is Set<*> -> prefs[key as Preferences.Key<Set<String>>] = value as Set<String>
+            is ByteArray -> prefs[key as Preferences.Key<ByteArray>] = value
         }
     }
 
