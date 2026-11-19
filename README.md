@@ -9,7 +9,7 @@ Android Automotive OS ships with `CarService`, the system service that exposes t
 CarService-AOSP fills that gap. It provides a CarService that can be added to a regular AOSP build, so automotive apps like Google Maps Automotive can find the services they expect.
 
 ## Download
-Telegram: [https://t.me/GStore000/10](https://t.me/GStore000/10)
+Telegram: [https://t.me/GStore000](https://t.me/GStore000)
 
 ## Features
 
