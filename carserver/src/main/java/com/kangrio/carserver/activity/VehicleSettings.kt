@@ -231,7 +231,7 @@ class VehicleSettings : AppCompatActivity() {
         VehicleStore.MAPS_STYLE.set(VehicleStore, mapsStyle)
 
         Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show()
-        contentResolver?.notifyChange(MapsProvider.MAPS_SETTING_URI, null)
+        showRestartDialog()
     }
 
     private fun showRestartDialog() {
