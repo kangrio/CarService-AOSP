@@ -71,10 +71,6 @@ class MapsProvider : ContentProvider() {
         if (callingPackage != "com.google.android.apps.maps") {
             throw SecurityException("Unauthorized access from: $callingPackage")
         }
-        val pipe = ParcelFileDescriptor.createPipe()
-        val readSide = pipe[0]
-        val writeSide = pipe[1]
-
 
         val content = when (uri.authority) {
             "kangrio_google_maps_energy" -> when (uri.path) {
@@ -188,6 +184,10 @@ class MapsProvider : ContentProvider() {
 
             else -> return null
         }
+
+        val pipe = ParcelFileDescriptor.createPipe()
+        val readSide = pipe[0]
+        val writeSide = pipe[1]
 
         scope.launch {
             ParcelFileDescriptor.AutoCloseOutputStream(writeSide).use { out ->
