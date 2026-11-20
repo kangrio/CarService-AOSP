@@ -22,7 +22,6 @@ import com.kangrio.carserver.byd.PropertyUpdater
 import com.kangrio.carserver.datastore.VehicleStore
 import com.kangrio.carserver.util.LogUtils
 import com.kangrio.carserver.util.TAG
-import com.kangrio.carserver.util.getOrDefault
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -209,16 +208,16 @@ class PropertyService : ICarProperty.Stub() {
          * INFO_EXTERIOR_DIMENSIONS
          */
         val vin = buildString(17) { repeat(17) { append("ABCDEFGHJKLMNPRSTUVWXYZ0123456789".random()) } }
-        val vehicleVin = VehicleStore.VEHICLE_VIN.getOrDefault(
-            VehicleStore,
+        val vehicleVin = VehicleStore.getValue(
+            VehicleStore.VEHICLE_VIN,
             vin
         )
-        val vehicleName = VehicleStore.VEHICLE_NAME.getOrDefault(
-            VehicleStore,
+        val vehicleName = VehicleStore.getValue(
+            VehicleStore.VEHICLE_NAME,
             "BYD ${vin.substring(0, 4)}"
         )
-        val plugTypes = VehicleStore.VEHICLE_PLUG_TYPES.getOrDefault(
-            VehicleStore,
+        val plugTypes = VehicleStore.getValue(
+            VehicleStore.VEHICLE_PLUG_TYPES,
             byteArrayOf(
                 EvChargingConnectorType.IEC_TYPE_2_AC.toByte(),
                 EvChargingConnectorType.IEC_TYPE_2_CCS_DC.toByte()
@@ -236,36 +235,36 @@ class PropertyService : ICarProperty.Stub() {
             VehiclePropertyIds.INFO_MAKE to vehicleName,
             VehiclePropertyIds.INFO_MODEL to vehicleName,
             VehiclePropertyIds.INFO_EV_CONNECTOR_TYPE to plugTypes.map { Integer.valueOf(it.toInt()) }.toTypedArray(),
-            VehiclePropertyIds.INFO_DRIVER_SEAT to VehicleStore.DRIVER_SEAT.getOrDefault(
-                VehicleStore,
+            VehiclePropertyIds.INFO_DRIVER_SEAT to VehicleStore.getValue(
+                VehicleStore.DRIVER_SEAT,
                 VehicleAreaSeat.SEAT_ROW_1_LEFT
             ),
-            VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED to VehicleStore.CHARGE_PORT_CONNECTED.getOrDefault(
-                VehicleStore,
+            VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED to VehicleStore.getValue(
+                VehicleStore.CHARGE_PORT_CONNECTED,
                 false
             ),
-            VehiclePropertyIds.GEAR_SELECTION to VehicleStore.CURRENT_GEAR.getOrDefault(
-                VehicleStore,
+            VehiclePropertyIds.GEAR_SELECTION to VehicleStore.getValue(
+                VehicleStore.CURRENT_GEAR,
                 VehicleGear.GEAR_UNKNOWN
             ),
-            VehiclePropertyIds.IGNITION_STATE to VehicleStore.IGNITION_STATE.getOrDefault(
-                VehicleStore,
+            VehiclePropertyIds.IGNITION_STATE to VehicleStore.getValue(
+                VehicleStore.IGNITION_STATE,
                 VehicleIgnitionState.UNDEFINED
             ),
-            VehiclePropertyIds.PARKING_BRAKE_ON to VehicleStore.PARKING_BRAKE_ON.getOrDefault(
-                VehicleStore,
+            VehiclePropertyIds.PARKING_BRAKE_ON to VehicleStore.getValue(
+                VehicleStore.PARKING_BRAKE_ON,
                 false
             ),
 
             VehiclePropertyIds.DISTANCE_DISPLAY_UNITS to VehicleUnit.KILOMETER,
             VehiclePropertyIds.VEHICLE_SPEED_DISPLAY_UNITS to VehicleUnit.KILOMETERS_PER_HOUR,
 
-            VehiclePropertyIds.PERF_VEHICLE_SPEED to (VehicleStore.SPEED_METER_PER_SEC.getOrDefault(
-                VehicleStore,
+            VehiclePropertyIds.PERF_VEHICLE_SPEED to (VehicleStore.getValue(
+                VehicleStore.SPEED_METER_PER_SEC,
                 0f
             )), // m/s
-            VehiclePropertyIds.PERF_VEHICLE_SPEED_DISPLAY to (VehicleStore.SPEED_METER_PER_SEC.getOrDefault(
-                VehicleStore,
+            VehiclePropertyIds.PERF_VEHICLE_SPEED_DISPLAY to (VehicleStore.getValue(
+                VehicleStore.SPEED_METER_PER_SEC,
                 0f
             )), // m/s
 

@@ -20,7 +20,6 @@ import com.kangrio.carserver.datastore.SettingsStore
 import com.kangrio.carserver.provider.EnergyModelFactory
 import com.kangrio.carserver.util.LogUtils
 import com.kangrio.carserver.util.TAG
-import com.kangrio.carserver.util.getOrDefault
 
 class CarService : Service() {
     private val carServer = CarServer()
@@ -29,7 +28,7 @@ class CarService : Service() {
         super.onCreate()
         LogUtils.i(TAG, "onCreate")
         startForeground()
-        if (SettingsStore.ABRP_AUTO_START.getOrDefault(SettingsStore, false)) {
+        if (SettingsStore.getValue(SettingsStore.ABRP_AUTO_START, false)) {
             AbrpTelemetryService.start(this)
         }
 

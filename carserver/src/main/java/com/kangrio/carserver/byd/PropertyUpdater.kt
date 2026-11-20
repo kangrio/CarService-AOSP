@@ -23,8 +23,6 @@ import com.kangrio.carserver.datastore.VehicleStore
 import com.kangrio.carserver.provider.EnergyModelFactory
 import com.kangrio.carserver.util.LogUtils
 import com.kangrio.carserver.util.TAG
-import com.kangrio.carserver.util.getOrDefault
-import com.kangrio.carserver.util.set
 
 class PropertyUpdater(val propertyService: PropertyService) :
     IPropertyUpdater,
@@ -83,16 +81,16 @@ class PropertyUpdater(val propertyService: PropertyService) :
         if (BydServices.supportAutoService) {
             try {
                 val lowBeamStateOn = LightDevice.isLowBeamStateOn()
-                VehicleStore.VEHICLE_LOW_BEAM_STATE_ON.set(VehicleStore, lowBeamStateOn)
+                VehicleStore.setValue(VehicleStore.VEHICLE_LOW_BEAM_STATE_ON, lowBeamStateOn)
 
-                val driverSeat = VehicleStore.DRIVER_SEAT.getOrDefault(VehicleStore, BodyworkDevice.getDriverSeat())
+                val driverSeat = VehicleStore.getValue(VehicleStore.DRIVER_SEAT, BodyworkDevice.getDriverSeat())
                 setDriverSeat(driverSeat)
 
-                val capacityWh = VehicleStore.BATTERY_CAPACITY_WH.getOrDefault(
-                    VehicleStore,
+                val capacityWh = VehicleStore.getValue(
+                    VehicleStore.BATTERY_CAPACITY_WH,
                     BatteryDevice.getBatteryCapacityWh()
                 )
-                VehicleStore.BATTERY_CAPACITY_WH.set(VehicleStore, capacityWh)
+                VehicleStore.setValue(VehicleStore.BATTERY_CAPACITY_WH, capacityWh)
 
                 val batteryLevelPercent = BatteryDevice.getBatteryLevelPercent()
                 setBatteryLevelPercent(batteryLevelPercent)
@@ -108,63 +106,63 @@ class PropertyUpdater(val propertyService: PropertyService) :
 
                 val currentGear = BydServices.getGearboxDevice().currentGear
                 setCurrentGear(
-                    gearMap[currentGear] ?: VehicleStore.CURRENT_GEAR.getOrDefault(
-                        VehicleStore, VehicleGear.GEAR_UNKNOWN
+                    gearMap[currentGear] ?: VehicleStore.getValue(
+                        VehicleStore.CURRENT_GEAR, VehicleGear.GEAR_UNKNOWN
                     )
                 )
 
                 val powerLevel = BodyworkDevice.getPowerLevel()
                 setIgnitionState(
-                    ignitionStateMap[powerLevel] ?: VehicleStore.IGNITION_STATE.getOrDefault(
-                        VehicleStore, VehicleIgnitionState.UNDEFINED
+                    ignitionStateMap[powerLevel] ?: VehicleStore.getValue(
+                        VehicleStore.IGNITION_STATE, VehicleIgnitionState.UNDEFINED
                     )
                 )
 
                 val chargingGunState = ChargingDevice.getChargingPortState()
                 setChargingPortConnected(
                     chargingPortConnectedMap[chargingGunState]
-                        ?: VehicleStore.CHARGE_PORT_CONNECTED.getOrDefault(
-                            VehicleStore, false
+                        ?: VehicleStore.getValue(
+                            VehicleStore.CHARGE_PORT_CONNECTED, false
                         )
                 )
             } catch (e: Throwable) {
                 LogUtils.e(TAG, "collect byd initial value failed", e)
             }
         } else {
-            val capacityWh = VehicleStore.BATTERY_CAPACITY_WH.getOrDefault(
-                VehicleStore,
+            val capacityWh = VehicleStore.getValue(
+                VehicleStore.BATTERY_CAPACITY_WH,
                 DEFAULT_BATTERY_CAPACITY_WH
             )
-            VehicleStore.BATTERY_CAPACITY_WH.set(VehicleStore, capacityWh)
+            VehicleStore.setValue(VehicleStore.BATTERY_CAPACITY_WH, capacityWh)
 
-            val batteryLevelPercent = VehicleStore.BATTERY_LEVEL_PERCENT.getOrDefault(
-                VehicleStore,
+            val batteryLevelPercent = VehicleStore.getValue(
+                VehicleStore.BATTERY_LEVEL_PERCENT,
                 DEFAULT_BATTERY_LEVEL_PERCENT
             )
             setBatteryLevelPercent(batteryLevelPercent)
 
-            val speedMeters = VehicleStore.SPEED_METER_PER_SEC.getOrDefault(VehicleStore, 0f)
+            val speedMeters = VehicleStore.getValue(VehicleStore.SPEED_METER_PER_SEC, 0f)
             setSpeedMetersPerSec(speedMeters)
 
-            val consumptionWh = VehicleStore.CONSUMPTION_WH_PER_100KM.getOrDefault(
-                VehicleStore,
+            val consumptionWh = VehicleStore.getValue(
+                VehicleStore.CONSUMPTION_WH_PER_100KM,
                 DEFAULT_CONSUMPTION_WH_PER_100KM
             )
             setConsumptionWhPer100km(consumptionWh)
 
 
             val currentGear =
-                VehicleStore.CURRENT_GEAR.getOrDefault(VehicleStore, VehicleGear.GEAR_UNKNOWN)
+                VehicleStore.getValue(VehicleStore.CURRENT_GEAR, VehicleGear.GEAR_UNKNOWN)
             setCurrentGear(currentGear)
 
-            val ignitionState = VehicleStore.IGNITION_STATE.getOrDefault(
-                VehicleStore,
+            val ignitionState = VehicleStore.getValue(
+                VehicleStore.IGNITION_STATE,
                 VehicleIgnitionState.UNDEFINED
             )
             setIgnitionState(ignitionState)
 
             val chargingGunState =
-                VehicleStore.CHARGE_PORT_CONNECTED.getOrDefault(VehicleStore, false)
+                VehicleStore.getValue(VehicleStore.CHARGE_PORT_CONNECTED, false)
             setChargingPortConnected(chargingGunState)
         }
         VehicleStore.getAllValue().forEach {
@@ -227,77 +225,76 @@ class PropertyUpdater(val propertyService: PropertyService) :
     override fun setSpeedMetersPerSec(speed: Float) {
         LogUtils.i(TAG, "setSpeedMetersPerSec speed=${speed}m/s, ${speed * 3.6}km/h")
         setGlobalProperty(VehiclePropertyIds.PERF_VEHICLE_SPEED, speed)
-        VehicleStore.SPEED_METER_PER_SEC.set(VehicleStore, speed)
+        VehicleStore.setValue(VehicleStore.SPEED_METER_PER_SEC, speed)
     }
 
     override fun setConsumptionWhPer100km(wh: Int) {
         LogUtils.i(TAG, "setConsumptionWhPer100km wh=$wh")
         EnergyModelFactory.setConsumptionWh(wh)
-        VehicleStore.CONSUMPTION_WH_PER_100KM.set(VehicleStore, wh)
+        VehicleStore.setValue(VehicleStore.CONSUMPTION_WH_PER_100KM, wh)
     }
 
     override fun setBatteryLevelPercent(percent: Float) {
         LogUtils.i(TAG, "setBatteryLevelPercent percent=$percent")
-        val batteryCapacityWh = VehicleStore.BATTERY_CAPACITY_WH
-            .getOrDefault(
-                VehicleStore,
+        val batteryCapacityWh = VehicleStore.getValue(
+                VehicleStore.BATTERY_CAPACITY_WH,
                 DEFAULT_BATTERY_CAPACITY_WH
             )
         val wh = (percent * batteryCapacityWh.toFloat() / 100f).toInt()
-        VehicleStore.BATTERY_LEVEL_PERCENT.set(VehicleStore, percent)
-        VehicleStore.BATTERY_LEVEL_WH.set(VehicleStore, wh)
+        VehicleStore.setValue(VehicleStore.BATTERY_LEVEL_PERCENT, percent)
+        VehicleStore.setValue(VehicleStore.BATTERY_LEVEL_WH, wh)
         EnergyModelFactory.setBatteryLevelWh(wh)
     }
 
     fun setBatteryHealthPercent(float: Float) {
         LogUtils.i(TAG, "setBatteryHealthPercent percent=$float")
-        VehicleStore.BATTERY_HEALTH_PERCENT.set(VehicleStore, float)
+        VehicleStore.setValue(VehicleStore.BATTERY_HEALTH_PERCENT, float)
     }
 
     override fun setCurrentGear(gear: Int) {
         LogUtils.i(TAG, "setCurrentGear gear=$gear")
         setParkingBrakeOn(gear == VehicleGear.GEAR_PARK)
         setGlobalProperty(VehiclePropertyIds.GEAR_SELECTION, gear)
-        VehicleStore.CURRENT_GEAR.set(VehicleStore, gear)
+        VehicleStore.setValue(VehicleStore.CURRENT_GEAR, gear)
     }
 
     override fun setParkingBrakeOn(on: Boolean) {
         LogUtils.i(TAG, "setParkingBrakeOn on=$on")
         setGlobalProperty(VehiclePropertyIds.PARKING_BRAKE_ON, on)
-        VehicleStore.PARKING_BRAKE_ON.set(VehicleStore, on)
+        VehicleStore.setValue(VehicleStore.PARKING_BRAKE_ON, on)
     }
 
     override fun setIgnitionState(state: Int) {
         LogUtils.i(TAG, "setIgnitionState state=$state")
         setGlobalProperty(VehiclePropertyIds.IGNITION_STATE, state)
-        VehicleStore.IGNITION_STATE.set(VehicleStore, state)
+        VehicleStore.setValue(VehicleStore.IGNITION_STATE, state)
     }
 
     override fun setChargingPortConnected(connected: Boolean) {
         LogUtils.i(TAG, "setChargingPortConnected connected=$connected")
         setGlobalProperty(VehiclePropertyIds.EV_CHARGE_PORT_CONNECTED, connected)
-        VehicleStore.CHARGE_PORT_CONNECTED.set(VehicleStore, connected)
+        VehicleStore.setValue(VehicleStore.CHARGE_PORT_CONNECTED, connected)
     }
 
     override fun setDriverSeat(seat: Int) {
         LogUtils.i(TAG, "setRightDriver rightDriver=$seat")
         setGlobalProperty(VehiclePropertyIds.INFO_DRIVER_SEAT, seat)
-        VehicleStore.DRIVER_SEAT.set(VehicleStore, seat)
+        VehicleStore.setValue(VehicleStore.DRIVER_SEAT, seat)
     }
 
     fun setChargingRateWh(volt: Int? = null, amp: Float? = null) {
         volt?.let {
-            VehicleStore.BATTERY_VOLTAGE_VOLT.set(VehicleStore, it)
+            VehicleStore.setValue(VehicleStore.BATTERY_VOLTAGE_VOLT, it)
         }
         amp?.let {
-            VehicleStore.BATTERY_CURRENT_AMP.set(VehicleStore, it)
+            VehicleStore.setValue(VehicleStore.BATTERY_CURRENT_AMP, it)
         }
-        val volts = VehicleStore.BATTERY_VOLTAGE_VOLT.getOrDefault(VehicleStore, 0)
-        val currentAmp = VehicleStore.BATTERY_CURRENT_AMP.getOrDefault(VehicleStore, 0f)
+        val volts = VehicleStore.getValue(VehicleStore.BATTERY_VOLTAGE_VOLT, 0)
+        val currentAmp = VehicleStore.getValue(VehicleStore.BATTERY_CURRENT_AMP, 0f)
 
         val wh = (volts.toFloat() * currentAmp).toInt()
         LogUtils.i(TAG, "setChargingRateWh volt=$volts currentAmp=$currentAmp wh=$wh")
-        VehicleStore.CHARGE_RATE_WH.set(VehicleStore, wh)
+        VehicleStore.setValue(VehicleStore.CHARGE_RATE_WH, wh)
     }
 
     private fun setGlobalProperty(propId: Int, value: Any) {
@@ -360,7 +357,7 @@ class PropertyUpdater(val propertyService: PropertyService) :
             }
 
             BYDAutoFeatureIds.LIGHT_LOW_BEAM_LIGHT -> {
-                VehicleStore.VEHICLE_LOW_BEAM_STATE_ON.set(VehicleStore, LightDevice.isLowBeamStateOn())
+                VehicleStore.setValue(VehicleStore.VEHICLE_LOW_BEAM_STATE_ON, LightDevice.isLowBeamStateOn())
             }
         }
     }

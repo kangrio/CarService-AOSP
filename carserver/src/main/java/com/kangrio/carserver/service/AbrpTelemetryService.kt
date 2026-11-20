@@ -9,9 +9,7 @@ import com.kangrio.carserver.abrp.AbrpTelemetryClient
 import com.kangrio.carserver.abrp.TelemetrySource
 import com.kangrio.carserver.datastore.SettingsStore
 import com.kangrio.carserver.util.TAG
-import com.kangrio.carserver.util.getOrDefault
 import com.kangrio.carserver.util.hasLocationPermission
-import com.kangrio.carserver.util.set
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -37,7 +35,7 @@ class AbrpTelemetryService : Service() {
     override fun onDestroy() {
         running = false
         scope.cancel()
-        SettingsStore.ABRP_RUNNING.set(SettingsStore, false)
+        SettingsStore.setValue(SettingsStore.ABRP_RUNNING, false)
         super.onDestroy()
     }
 
@@ -46,8 +44,8 @@ class AbrpTelemetryService : Service() {
     private fun startSending() {
         if (running) return
 
-        val apiKey = SettingsStore.ABRP_API_KEY.getOrDefault(SettingsStore, "")
-        val token = SettingsStore.ABRP_TOKEN.getOrDefault(SettingsStore, "")
+        val apiKey = SettingsStore.getValue(SettingsStore.ABRP_API_KEY, "")
+        val token = SettingsStore.getValue(SettingsStore.ABRP_TOKEN, "")
         if (apiKey.isBlank() || token.isBlank()) {
             Log.w(TAG, "ABRP API key or token is missing; service stopped")
             stopSelf()
@@ -60,7 +58,7 @@ class AbrpTelemetryService : Service() {
         }
 
         running = true
-        SettingsStore.ABRP_RUNNING.set(SettingsStore, true)
+        SettingsStore.setValue(SettingsStore.ABRP_RUNNING, true)
         scope.launch {
             while (isActive) {
                 val telemetry = telemetrySource.next()

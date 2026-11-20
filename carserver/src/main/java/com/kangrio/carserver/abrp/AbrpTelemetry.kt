@@ -1,7 +1,6 @@
 package com.kangrio.carserver.abrp
 
 import com.kangrio.carserver.datastore.VehicleStore
-import com.kangrio.carserver.util.getOrDefault
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
@@ -42,21 +41,21 @@ data class AbrpTelemetry(
 class TelemetrySource {
 
     fun next(): AbrpTelemetry {
-        val soc = VehicleStore.BATTERY_LEVEL_PERCENT.getOrDefault(
-            VehicleStore,
+        val soc = VehicleStore.getValue(
+            VehicleStore.BATTERY_LEVEL_PERCENT,
             100f
         ).toDouble()
-        val soh = VehicleStore.BATTERY_HEALTH_PERCENT.getOrDefault(
-            VehicleStore,
+        val soh = VehicleStore.getValue(
+            VehicleStore.BATTERY_HEALTH_PERCENT,
             92f
         ).toDouble()
 
-        val speed = VehicleStore.SPEED_METER_PER_SEC.getOrDefault(VehicleStore, 0f).toDouble() * 3.6
-        val parked = VehicleStore.PARKING_BRAKE_ON.getOrDefault(VehicleStore, true)
-        val isCharging = VehicleStore.CHARGE_PORT_CONNECTED.getOrDefault(VehicleStore, false)
-        val power = VehicleStore.CHARGE_RATE_WH.getOrDefault(VehicleStore, 0).toDouble() / 1000.0
-        val lat = 0.0 // VehicleStore.LATITUDE.getOrDefault(VehicleStore, 0.0)
-        val lon = 0.0 // VehicleStore.LONGITUDE.getOrDefault(VehicleStore, 0.0)
+        val speed = VehicleStore.getValue(VehicleStore.SPEED_METER_PER_SEC, 0f).toDouble() * 3.6
+        val parked = VehicleStore.getValue(VehicleStore.PARKING_BRAKE_ON, true)
+        val isCharging = VehicleStore.getValue(VehicleStore.CHARGE_PORT_CONNECTED, false)
+        val power = VehicleStore.getValue(VehicleStore.CHARGE_RATE_WH, 0).toDouble() / 1000.0
+        val lat = 0.0 // VehicleStore.getValue(VehicleStore.LATITUDE, 0.0)
+        val lon = 0.0 // VehicleStore.getValue(VehicleStore.LONGITUDE, 0.0)
 
         return AbrpTelemetry(
             utc = System.currentTimeMillis() / 1000L,

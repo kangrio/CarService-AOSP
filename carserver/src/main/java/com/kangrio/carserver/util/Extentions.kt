@@ -34,17 +34,6 @@ fun Context.hasLocationPermission(): Boolean =
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
 
-fun <T> Preferences.Key<T>.getOrDefault(
-    store: DataStoreBase,
-    defaultValue: T
-): T = store.getValue(this, defaultValue)
-
-
-fun <T> Preferences.Key<T>.set(
-    store: DataStoreBase,
-    value: T
-) = store.setValue(this, value)
-
 fun View.applySystemBarInsets(
     type: Int = WindowInsetsCompat.Type.systemBars()
 ) {

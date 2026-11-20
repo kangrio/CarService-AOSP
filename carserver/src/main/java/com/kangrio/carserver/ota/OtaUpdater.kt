@@ -17,8 +17,6 @@ import com.kangrio.carserver.data.ReleaseInfo
 import com.kangrio.carserver.datastore.SettingsStore
 import com.kangrio.carserver.datastore.VehicleStore
 import com.kangrio.carserver.util.LogUtils
-import com.kangrio.carserver.util.getOrDefault
-import com.kangrio.carserver.util.set
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -61,7 +59,7 @@ object OtaUpdater {
      */
     fun shouldCheck(force: Boolean = false): Boolean {
         if (force) return true
-        val lastCheck = SettingsStore.LAST_OTA_CHECK_TIME.getOrDefault(SettingsStore, 0L)
+        val lastCheck = SettingsStore.getValue(SettingsStore.LAST_OTA_CHECK_TIME, 0L)
         val currentTime = System.currentTimeMillis()
         return (currentTime - lastCheck) >= Constant.OTA_CHECK_INTERVAL_MS
     }
@@ -80,7 +78,7 @@ object OtaUpdater {
                 val releaseInfo = checkForUpdate(context, force = force)
                 if (releaseInfo != null) {
                     LogUtils.i(TAG, "New OTA version available: ${releaseInfo.tagName}")
-                    SettingsStore.OTA_LATEST_VERSION.set(VehicleStore, releaseInfo.tagName)
+                    SettingsStore.setValue(SettingsStore.OTA_LATEST_VERSION, releaseInfo.tagName)
                     showUpdateNotification(context, releaseInfo)
                 } else {
                     LogUtils.d(TAG, context.getString(R.string.app_name) + " is up-to-date.")
@@ -110,7 +108,7 @@ object OtaUpdater {
                 }
             }
 
-            SettingsStore.LAST_OTA_CHECK_TIME.set(SettingsStore, System.currentTimeMillis())
+            SettingsStore.setValue(SettingsStore.LAST_OTA_CHECK_TIME, System.currentTimeMillis())
 
             val apkAsset = release.assets.firstOrNull { asset ->
                 asset.name.endsWith(".apk", ignoreCase = true)

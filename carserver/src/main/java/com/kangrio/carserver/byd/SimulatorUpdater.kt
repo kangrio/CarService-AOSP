@@ -9,9 +9,7 @@ import android.os.Bundle
 import android.os.SystemClock
 import com.kangrio.carserver.App
 import com.kangrio.carserver.datastore.VehicleStore
-import com.kangrio.carserver.util.getOrDefault
 import com.kangrio.carserver.util.hasLocationPermission
-import com.kangrio.carserver.util.set
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -49,9 +47,9 @@ class SimulatorUpdater(val propertyUpdater: PropertyUpdater) {
                             if (location.hasSpeed() && location.speed > 1f) location.speed else 0f
                         propertyUpdater.setSpeedMetersPerSec(currentSpeedMps)
                     }
-                    VehicleStore.LATITUDE.set(VehicleStore, location.latitude)
-                    VehicleStore.LONGITUDE.set(VehicleStore, location.longitude)
-                    VehicleStore.ALTITUDE.set(VehicleStore, location.altitude)
+                    VehicleStore.setValue(VehicleStore.LATITUDE, location.latitude)
+                    VehicleStore.setValue(VehicleStore.LONGITUDE, location.longitude)
+                    VehicleStore.setValue(VehicleStore.ALTITUDE, location.altitude)
                 }
 
                 override fun onProviderDisabled(provider: String) = Unit
@@ -83,7 +81,7 @@ class SimulatorUpdater(val propertyUpdater: PropertyUpdater) {
                 val deltaHours = (now - lastTime) / 3_600_000.0
                 lastTime = now
 
-                var batteryWh = VehicleStore.BATTERY_LEVEL_WH.getOrDefault(VehicleStore, PropertyUpdater.DEFAULT_BATTERY_CAPACITY_WH).toDouble()
+                var batteryWh = VehicleStore.getValue(VehicleStore.BATTERY_LEVEL_WH, PropertyUpdater.DEFAULT_BATTERY_CAPACITY_WH).toDouble()
 
                 val speedKmh = currentSpeedMps * 3.6
                 val consumptionWhPer100Km = consumptionFor(speedKmh) * 1000.0
@@ -100,14 +98,14 @@ class SimulatorUpdater(val propertyUpdater: PropertyUpdater) {
                 if (batteryWh < 0) {
                     batteryWh = Random.nextDouble(10_000.0, PropertyUpdater.DEFAULT_BATTERY_CAPACITY_WH.toDouble())
                 }
-                val batteryPercent = (batteryWh.toFloat() / VehicleStore.BATTERY_CAPACITY_WH.getOrDefault(
-                    VehicleStore, PropertyUpdater.DEFAULT_BATTERY_CAPACITY_WH).toFloat() * 100f)
+                val batteryPercent = (batteryWh.toFloat() / VehicleStore.getValue(
+                    VehicleStore.BATTERY_CAPACITY_WH, PropertyUpdater.DEFAULT_BATTERY_CAPACITY_WH).toFloat() * 100f)
 
-                VehicleStore.CHARGE_RATE_WH.set(VehicleStore, (power * 1000).toInt())
+                VehicleStore.setValue(VehicleStore.CHARGE_RATE_WH, (power * 1000).toInt())
                 propertyUpdater.setBatteryLevelPercent(batteryPercent)
                 propertyUpdater.setConsumptionWhPer100km(consumptionWhPer100Km.toInt())
-                val headLightOn = VehicleStore.VEHICLE_LOW_BEAM_STATE_ON.getOrDefault(VehicleStore, false)
-                VehicleStore.VEHICLE_LOW_BEAM_STATE_ON.set(VehicleStore, !headLightOn)
+                val headLightOn = VehicleStore.getValue(VehicleStore.VEHICLE_LOW_BEAM_STATE_ON, false)
+                VehicleStore.setValue(VehicleStore.VEHICLE_LOW_BEAM_STATE_ON, !headLightOn)
                 delay(updateIntervalMs.milliseconds)
             }
         }

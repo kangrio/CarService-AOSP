@@ -27,8 +27,6 @@ import com.kangrio.carserver.R
 import com.kangrio.carserver.datastore.VehicleStore
 import com.kangrio.carserver.provider.MapsStyle
 import com.kangrio.carserver.util.applySystemBarInsets
-import com.kangrio.carserver.util.getOrDefault
-import com.kangrio.carserver.util.set
 import org.json.JSONObject
 import java.io.File
 import kotlin.system.exitProcess
@@ -88,7 +86,7 @@ class VehicleSettings : AppCompatActivity() {
 
     private fun setupClearEnergyButton() {
         clearEnergyButton.setOnClickListener {
-            VehicleStore.ENERGY_MODEL_PATH.set(VehicleStore, "")
+            VehicleStore.setValue(VehicleStore.ENERGY_MODEL_PATH, "")
             updateEnergyStatus()
             Toast.makeText(this, "Energy model cleared", Toast.LENGTH_SHORT).show()
         }
@@ -96,9 +94,9 @@ class VehicleSettings : AppCompatActivity() {
 
     private fun setupPlugTypesButton() {
         plugTypesButton.setOnClickListener {
-            val selectedTypes = VehicleStore.VEHICLE_PLUG_TYPES.getOrDefault(VehicleStore, byteArrayOf())
+            val selectedTypes = VehicleStore.getValue(VehicleStore.VEHICLE_PLUG_TYPES, byteArrayOf())
             showPlugTypeDialog(selectedTypes.toSet()) {
-                VehicleStore.VEHICLE_PLUG_TYPES.set(VehicleStore, it.toByteArray())
+                VehicleStore.setValue(VehicleStore.VEHICLE_PLUG_TYPES, it.toByteArray())
             }
         }
     }
@@ -132,10 +130,10 @@ class VehicleSettings : AppCompatActivity() {
     }
 
     private fun updateEnergyStatus() {
-        val modelPath = VehicleStore.ENERGY_MODEL_PATH.getOrDefault(VehicleStore, "")
+        val modelPath = VehicleStore.getValue(VehicleStore.ENERGY_MODEL_PATH, "")
         val hasModel = modelPath.isNotEmpty()
         energyStatus.text = if (hasModel) {
-            "Imported: ${VehicleStore.ENERGY_MODEL_PATH.getOrDefault(VehicleStore, "custom model")}"
+            "Imported: ${VehicleStore.getValue(VehicleStore.ENERGY_MODEL_PATH, "custom model")}"
         } else {
             "Using default model"
         }
@@ -161,7 +159,7 @@ class VehicleSettings : AppCompatActivity() {
             val file = File(getExternalFilesDir(MODEL_DIR), name).apply { parentFile?.mkdirs(); createNewFile() }
             file.writeText(text)
 
-            VehicleStore.ENERGY_MODEL_PATH.set(VehicleStore, file.absolutePath)
+            VehicleStore.setValue(VehicleStore.ENERGY_MODEL_PATH, file.absolutePath)
             updateEnergyStatus()
             Toast.makeText(this, "Energy model imported", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
@@ -190,17 +188,17 @@ class VehicleSettings : AppCompatActivity() {
 
     private fun loadValues() {
         updateEnergyStatus()
-        nameInput.setText(VehicleStore.VEHICLE_NAME.getOrDefault(VehicleStore, ""))
+        nameInput.setText(VehicleStore.getValue(VehicleStore.VEHICLE_NAME, ""))
 
-        val capacity = VehicleStore.BATTERY_CAPACITY_WH.getOrDefault(VehicleStore, 0)
+        val capacity = VehicleStore.getValue(VehicleStore.BATTERY_CAPACITY_WH, 0)
         if (capacity > 0) capacityInput.setText(capacity.toString())
         updateCapacityHelper()
 
-        val seat = VehicleStore.DRIVER_SEAT.getOrDefault(VehicleStore, VehicleAreaSeat.SEAT_ROW_1_LEFT)
+        val seat = VehicleStore.getValue(VehicleStore.DRIVER_SEAT, VehicleAreaSeat.SEAT_ROW_1_LEFT)
         seatToggleGroup.check(
             if (seat == VehicleAreaSeat.SEAT_ROW_1_RIGHT) R.id.seatRightButton else R.id.seatLeftButton
         )
-        val mapsStyle = VehicleStore.MAPS_STYLE.getOrDefault(VehicleStore, MapsStyle.AUTO)
+        val mapsStyle = VehicleStore.getValue(VehicleStore.MAPS_STYLE, MapsStyle.AUTO)
         mapsStyleToggleGroup.check(
             when (mapsStyle) {
                 MapsStyle.BEAM -> R.id.mapsStyleBeamButton
@@ -210,7 +208,7 @@ class VehicleSettings : AppCompatActivity() {
             }
         )
 
-        vinText.text = "virtual VIN: ${VehicleStore.VEHICLE_VIN.getOrDefault(VehicleStore, "-")}"
+        vinText.text = "virtual VIN: ${VehicleStore.getValue(VehicleStore.VEHICLE_VIN, "-")}"
     }
 
     private fun setupCapacityHelper() {
@@ -281,10 +279,10 @@ class VehicleSettings : AppCompatActivity() {
 
         val seat = selectedSeat()
         val mapsStyle = selectedMapsStyle()
-        VehicleStore.VEHICLE_NAME.set(VehicleStore, name)
-        VehicleStore.BATTERY_CAPACITY_WH.set(VehicleStore, capacity!!)
-        VehicleStore.DRIVER_SEAT.set(VehicleStore, seat)
-        VehicleStore.MAPS_STYLE.set(VehicleStore, mapsStyle)
+        VehicleStore.setValue(VehicleStore.VEHICLE_NAME, name)
+        VehicleStore.setValue(VehicleStore.BATTERY_CAPACITY_WH, capacity!!)
+        VehicleStore.setValue(VehicleStore.DRIVER_SEAT, seat)
+        VehicleStore.setValue(VehicleStore.MAPS_STYLE, mapsStyle)
 
         Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show()
         showRestartDialog()

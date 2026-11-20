@@ -3,7 +3,6 @@ package com.kangrio.carserver.datastore
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.kangrio.carserver.util.getOrDefault
 
 object SettingsStore : DataStoreBase("settings") {
     val ABRP_API_KEY = stringPreferencesKey("settings_abrp_api_key")
@@ -15,6 +14,6 @@ object SettingsStore : DataStoreBase("settings") {
     val OTA_LATEST_VERSION = stringPreferencesKey("settings_ota_latest_version")
 
     init {
-        ABRP_AUTO_START.getOrDefault(SettingsStore, false)
+        getValue(ABRP_AUTO_START, false)
     }
 }

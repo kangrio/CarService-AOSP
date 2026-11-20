@@ -8,8 +8,6 @@ import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.kangrio.carserver.util.getOrDefault
-import com.kangrio.carserver.util.set
 
 object VehicleStore : DataStoreBase("vehicle") {
     val BATTERY_CAPACITY_WH = intPreferencesKey("vehicle_battery_capacity_wh")
@@ -47,13 +45,13 @@ object VehicleStore : DataStoreBase("vehicle") {
     override fun init(context: Context) {
         super.init(context)
         val vin = buildString(17) { repeat(17) { append("ABCDEFGHJKLMNPRSTUVWXYZ0123456789".random()) } }
-        VEHICLE_VIN.set(VehicleStore, VEHICLE_VIN.getOrDefault(VehicleStore, vin))
-        VEHICLE_NAME.set(VehicleStore, VEHICLE_NAME.getOrDefault(VehicleStore, "BYD ${vin.substring(0, 4)}"))
-        MAPS_STYLE.set(VehicleStore, MAPS_STYLE.getOrDefault(VehicleStore, "auto"))
+        setValue(VEHICLE_VIN, getValue(VEHICLE_VIN, vin))
+        setValue(VEHICLE_NAME, getValue(VEHICLE_NAME, "BYD ${vin.substring(0, 4)}"))
+        setValue(MAPS_STYLE, getValue(MAPS_STYLE, "auto"))
         val plugTypes = byteArrayOf(
             EvChargingConnectorType.IEC_TYPE_2_AC.toByte(),
             EvChargingConnectorType.IEC_TYPE_2_CCS_DC.toByte()
         )
-        VEHICLE_PLUG_TYPES.set(VehicleStore, VEHICLE_PLUG_TYPES.getOrDefault(VehicleStore, plugTypes))
+        setValue(VEHICLE_PLUG_TYPES, getValue(VEHICLE_PLUG_TYPES, plugTypes))
     }
 }

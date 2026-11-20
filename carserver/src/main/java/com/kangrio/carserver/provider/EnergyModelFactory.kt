@@ -14,7 +14,6 @@ import com.kangrio.carserver.data.EnergyData
 import com.kangrio.carserver.datastore.VehicleStore
 import com.kangrio.carserver.util.LogUtils
 import com.kangrio.carserver.util.TAG
-import com.kangrio.carserver.util.getOrDefault
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -40,7 +39,7 @@ class EnergyModelFactory private constructor() {
 
     private fun initInternal() {
         val defaultEnergyModel = File(appContext.getExternalFilesDir(MODEL_DIR), MODEL_FILE_NAME)
-        val customEnergyModel = VehicleStore.ENERGY_MODEL_PATH.getOrDefault(VehicleStore, "")
+        val customEnergyModel = VehicleStore.getValue(VehicleStore.ENERGY_MODEL_PATH, "")
         val usedModelFile: File = if (customEnergyModel.isEmpty()) {
             defaultEnergyModel
         } else {
@@ -187,22 +186,22 @@ class EnergyModelFactory private constructor() {
     }
 
     private fun readBatteryWh(): Int {
-        return VehicleStore.BATTERY_LEVEL_WH.getOrDefault(
-                VehicleStore,
+        return VehicleStore.getValue(
+                VehicleStore.BATTERY_LEVEL_WH,
             PropertyUpdater.DEFAULT_BATTERY_LEVEL_WH
             )
     }
 
     private fun readBatteryCapacityWh(): Int {
-        return VehicleStore.BATTERY_CAPACITY_WH.getOrDefault(
-            VehicleStore,
+        return VehicleStore.getValue(
+            VehicleStore.BATTERY_CAPACITY_WH,
             PropertyUpdater.DEFAULT_BATTERY_CAPACITY_WH
         )
     }
 
     private fun readConsumptionWhPer100Km(): Int {
-        return VehicleStore.CONSUMPTION_WH_PER_100KM.getOrDefault(
-                VehicleStore,
+        return VehicleStore.getValue(
+                VehicleStore.CONSUMPTION_WH_PER_100KM,
             PropertyUpdater.DEFAULT_CONSUMPTION_WH_PER_100KM
         )
     }

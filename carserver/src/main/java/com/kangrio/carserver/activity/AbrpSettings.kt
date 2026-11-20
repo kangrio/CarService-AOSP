@@ -12,8 +12,6 @@ import com.kangrio.carserver.R
 import com.kangrio.carserver.datastore.SettingsStore
 import com.kangrio.carserver.service.AbrpTelemetryService
 import com.kangrio.carserver.util.applySystemBarInsets
-import com.kangrio.carserver.util.getOrDefault
-import com.kangrio.carserver.util.set
 
 class AbrpSettings : AppCompatActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
     private val apiKeyInput: EditText by lazy { findViewById(R.id.apiKeyInput) }
@@ -29,18 +27,18 @@ class AbrpSettings : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
 
         SettingsStore.registerOnSharedPreferenceChangeListener(this)
 
-        apiKeyInput.setText(SettingsStore.ABRP_API_KEY.getOrDefault(SettingsStore, ""))
-        tokenInput.setText(SettingsStore.ABRP_TOKEN.getOrDefault(SettingsStore, ""))
+        apiKeyInput.setText(SettingsStore.getValue(SettingsStore.ABRP_API_KEY, ""))
+        tokenInput.setText(SettingsStore.getValue(SettingsStore.ABRP_TOKEN, ""))
 
         startStopButton.setOnClickListener {
-            val running = SettingsStore.ABRP_RUNNING.getOrDefault(SettingsStore, false)
+            val running = SettingsStore.getValue(SettingsStore.ABRP_RUNNING, false)
             if (running) {
                 AbrpTelemetryService.stop(this)
-                SettingsStore.ABRP_AUTO_START.set(SettingsStore, false)
+                SettingsStore.setValue(SettingsStore.ABRP_AUTO_START, false)
             } else {
-                SettingsStore.ABRP_API_KEY.set(SettingsStore, apiKeyInput.text.toString().trim())
-                SettingsStore.ABRP_TOKEN.set(SettingsStore, tokenInput.text.toString().trim())
-                SettingsStore.ABRP_AUTO_START.set(SettingsStore, true)
+                SettingsStore.setValue(SettingsStore.ABRP_API_KEY, apiKeyInput.text.toString().trim())
+                SettingsStore.setValue(SettingsStore.ABRP_TOKEN, tokenInput.text.toString().trim())
+                SettingsStore.setValue(SettingsStore.ABRP_AUTO_START, true)
                 startService()
             }
         }
@@ -49,7 +47,7 @@ class AbrpSettings : AppCompatActivity(), SharedPreferences.OnSharedPreferenceCh
     }
 
     fun refreshStatus() {
-        val running = SettingsStore.ABRP_RUNNING.getOrDefault(SettingsStore, false)
+        val running = SettingsStore.getValue(SettingsStore.ABRP_RUNNING, false)
         statusText.text = if (running) {
             getString(R.string.abrp_status_running)
         } else {
