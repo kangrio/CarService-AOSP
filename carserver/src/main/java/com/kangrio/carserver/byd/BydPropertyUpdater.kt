@@ -179,15 +179,18 @@ class BydPropertyUpdater(propertyService: PropertyService) : BasePropertyUpdater
     private fun handleFloatEvent(eventType: Int, value: Float) {
         when (eventType) {
             BYDAutoFeatureIds.SPEED_AUTO_SPEED -> {
+                // km/h to m/s
                 setSpeedMetersPerSec(value / 3.6f)
             }
 
             BYDAutoFeatureIds.STATISTIC_LAST_ELEC_CON_PHM -> {
+                // 100km/kwh to 1kwh/100km
                 setConsumptionKmPerKwh(100_000f / (value * 1_000f).coerceAtLeast(0f))
             }
 
             BYDAutoFeatureIds.CHARGING_CHARGE_CURRENT -> {
-                setChargingRateMilliWatts(mAh = value * -1)
+                // Amp to milliAmp
+                setChargingRateMilliWatts(mAh = value * 1_000 * -1)
             }
         }
     }
