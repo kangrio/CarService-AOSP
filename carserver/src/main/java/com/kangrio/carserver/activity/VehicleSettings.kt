@@ -48,21 +48,9 @@ class VehicleSettings : AppCompatActivity() {
     private val mapsStyleToggleGroup: MaterialButtonToggleGroup by lazy { findViewById(R.id.mapsStyleToggleGroup) }
     private val plugTypesButton: MaterialButton by lazy { findViewById(R.id.plugTypesButton) }
 
-    private val plugTypes = mapOf(
-        "Type 1 AC" to EvChargingConnectorType.IEC_TYPE_1_AC.toByte(),
-        "CCS1" to EvChargingConnectorType.IEC_TYPE_1_CCS_DC.toByte(),
-        "Type 2 AC" to EvChargingConnectorType.IEC_TYPE_2_AC.toByte(),
-        "CCS2" to EvChargingConnectorType.IEC_TYPE_2_CCS_DC.toByte(),
-        "Tesla" to EvChargingConnectorType.TESLA_ROADSTER.toByte(),
-        "Type 3 AC" to EvChargingConnectorType.IEC_TYPE_3_AC.toByte(),
-        "CHAdeMO" to EvChargingConnectorType.IEC_TYPE_4_DC.toByte(),
-        "GBT AC" to EvChargingConnectorType.GBT_AC.toByte(),
-        "GBT DC" to EvChargingConnectorType.GBT_DC.toByte(),
-        "NACS (AC)" to EvChargingConnectorType.SAE_J3400_AC.toByte(),
-        "NACS (DC)" to EvChargingConnectorType.SAE_J3400_DC.toByte(),
-        "Other" to EvChargingConnectorType.OTHER.toByte(),
-        "Unknown" to EvChargingConnectorType.UNKNOWN.toByte()
-    )
+    private val plugTypes = EvChargingConnectorType::class.java.declaredFields.mapNotNull { field ->
+        field.name to field.getInt(null).toByte()
+    }.toMap()
 
     private val pickEnergyModel =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
