@@ -6,6 +6,7 @@ import android.car.VehicleAreaSeat
 import android.car.VehicleAreaType
 import android.car.VehicleGear
 import android.car.VehicleIgnitionState
+import android.car.VehicleLightState
 import android.car.VehiclePropertyIds
 import android.car.VehicleUnit
 import android.car.hardware.CarPropertyConfig
@@ -224,7 +225,6 @@ class PropertyService : ICarProperty.Stub() {
 
         return linkedMapOf(
             VehiclePropertyIds.INFO_MODEL_YEAR to 2023,
-            VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY to BasePropertyUpdater.DEFAULT_BATTERY_CAPACITY_WH,
             VehiclePropertyIds.INFO_EV_PORT_LOCATION to PortLocationType.FRONT_RIGHT,
             VehiclePropertyIds.INFO_FUEL_TYPE to arrayOf(Integer.valueOf(FuelType.ELECTRIC)),
 
@@ -232,6 +232,10 @@ class PropertyService : ICarProperty.Stub() {
             VehiclePropertyIds.INFO_VIN to vehicleVin,
             VehiclePropertyIds.INFO_MAKE to vehicleName,
             VehiclePropertyIds.INFO_MODEL to vehicleName,
+            VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY to VehicleStore.getValue(
+                VehicleStore.BATTERY_CAPACITY_WH,
+                BasePropertyUpdater.DEFAULT_BATTERY_CAPACITY_WH
+            ),
             VehiclePropertyIds.INFO_EV_CONNECTOR_TYPE to plugTypes.map { Integer.valueOf(it.toInt()) }.toTypedArray(),
             VehiclePropertyIds.INFO_DRIVER_SEAT to VehicleStore.getValue(
                 VehicleStore.DRIVER_SEAT,
@@ -253,18 +257,35 @@ class PropertyService : ICarProperty.Stub() {
                 VehicleStore.PARKING_BRAKE_ON,
                 false
             ),
+            VehiclePropertyIds.HEADLIGHTS_STATE to VehicleStore.getValue(
+                VehicleStore.VEHICLE_LOW_BEAM_STATE,
+                VehicleLightState.DAYTIME_RUNNING
+            ),
 
             VehiclePropertyIds.DISTANCE_DISPLAY_UNITS to VehicleUnit.KILOMETER,
             VehiclePropertyIds.VEHICLE_SPEED_DISPLAY_UNITS to VehicleUnit.KILOMETERS_PER_HOUR,
 
-            VehiclePropertyIds.PERF_VEHICLE_SPEED to (VehicleStore.getValue(
+            VehiclePropertyIds.PERF_VEHICLE_SPEED to VehicleStore.getValue(
                 VehicleStore.SPEED_METER_PER_SEC,
                 0f
-            )), // m/s
-            VehiclePropertyIds.PERF_VEHICLE_SPEED_DISPLAY to (VehicleStore.getValue(
+            ), // m/s
+            VehiclePropertyIds.PERF_VEHICLE_SPEED_DISPLAY to VehicleStore.getValue(
                 VehicleStore.SPEED_METER_PER_SEC,
                 0f
-            )), // m/s
+            ), // m/s
+            VehiclePropertyIds.EV_BATTERY_LEVEL to VehicleStore.getValue(
+                VehicleStore.BATTERY_LEVEL_WH,
+                BasePropertyUpdater.DEFAULT_BATTERY_LEVEL_WH
+            ),
+            VehiclePropertyIds.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE to VehicleStore.getValue(
+                VehicleStore.CHARGE_RATE_MWH,
+                0f
+            ),
+            // INSTANTANEOUS_EV_EFFICIENCY
+            291504658 to VehicleStore.getValue(
+                VehicleStore.CONSUMPTION_KM_PER_KWH,
+                BasePropertyUpdater.DEFAULT_CONSUMPTION_KM_PER_KWH
+            ),
 
             // on Android 13 maps requested this propertyId, has provided 0 and 1 but still not working to make maps reading vehicleInfo
 //            289410887 to 0, //

@@ -2,12 +2,14 @@ package com.kangrio.carserver.byd
 
 import android.car.VehicleGear
 import android.car.VehicleIgnitionState
+import android.car.VehicleLightState
 import android.hardware.BYDAutoManager
 import android.hardware.bydauto.BYDAutoConstants
 import android.hardware.bydauto.BYDAutoFeatureIds
 import android.hardware.bydauto.bodywork.BYDAutoBodyworkDevice
 import android.hardware.bydauto.charging.BYDAutoChargingDevice
 import android.hardware.bydauto.gearbox.BYDAutoGearboxDevice
+import android.hardware.bydauto.light.BYDAutoLightDevice
 import com.kangrio.carserver.App
 import com.kangrio.carserver.byd.battery.BatteryDevice
 import com.kangrio.carserver.byd.bodywork.BodyworkDevice
@@ -73,6 +75,11 @@ class BydPropertyUpdater(propertyService: PropertyService) : BasePropertyUpdater
         BYDAutoBodyworkDevice.BODYWORK_POWER_LEVEL_INVALID to VehicleIgnitionState.UNDEFINED,
     )
 
+    val headLightStateMap = mapOf(
+        BYDAutoLightDevice.LIGHT_ON to VehicleLightState.ON,
+        BYDAutoLightDevice.LIGHT_OFF to VehicleLightState.OFF
+    )
+
     override fun start() {
         if (isStarted) return
 
@@ -92,14 +99,15 @@ class BydPropertyUpdater(propertyService: PropertyService) : BasePropertyUpdater
 
         if (BydServices.supportAutoService) {
             try {
-                val lowBeamStateOn = LightDevice.isLowBeamStateOn()
-                setLowBeamLightOn(lowBeamStateOn)
+                val lowBeamStateState = LightDevice.getLowBeamState()
+                val lowBeamLightState = headLightStateMap[lowBeamStateState] ?: VehicleLightState.OFF
+                setLowBeamLightState(lowBeamLightState)
 
                 val driverSeat = VehicleStore.getValue(VehicleStore.DRIVER_SEAT, BodyworkDevice.getDriverSeat())
                 setDriverSeat(driverSeat)
 
                 val capacityWh = VehicleStore.getValue(VehicleStore.BATTERY_CAPACITY_WH, BatteryDevice.getBatteryCapacityWh())
-                setBatteryCapacityWh(capacityWh)
+                setBatteryCapacityWatts(capacityWh)
 
                 val batteryLevelPercent = BatteryDevice.getBatteryLevelPercent()
                 setBatteryLevelPercent(batteryLevelPercent)
@@ -111,7 +119,7 @@ class BydPropertyUpdater(propertyService: PropertyService) : BasePropertyUpdater
                 setSpeedMetersPerSec(speedMeters)
 
                 val consumptionWh = SpeedDevice.getConsumptionWh()
-                setConsumptionWhPer100km(consumptionWh)
+                setConsumptionKmPerKwh(100_000f / consumptionWh.coerceAtLeast(1))
 
                 val currentGear = BydServices.getGearboxDevice().currentGear
                 val gear = gearMap[currentGear] ?: VehicleStore.getValue(
@@ -175,11 +183,11 @@ class BydPropertyUpdater(propertyService: PropertyService) : BasePropertyUpdater
             }
 
             BYDAutoFeatureIds.STATISTIC_LAST_ELEC_CON_PHM -> {
-                setConsumptionWhPer100km((value * 1_000f).toInt())
+                setConsumptionKmPerKwh(100_000f / (value * 1_000f).coerceAtLeast(0f))
             }
 
             BYDAutoFeatureIds.CHARGING_CHARGE_CURRENT -> {
-                setChargingRateWh(amp = value)
+                setChargingRateMilliWatts(mAh = value * -1)
             }
         }
     }
@@ -201,7 +209,7 @@ class BydPropertyUpdater(propertyService: PropertyService) : BasePropertyUpdater
             }
 
             BYDAutoFeatureIds.CHARGING_CHARGE_BATTERY_VOLT -> {
-                setChargingRateWh(volt = value)
+                setChargingRateMilliWatts(volt = value)
             }
 
             BYDAutoFeatureIds.STATISTIC_REMAINING_BATTERY_POWER -> {
@@ -209,7 +217,8 @@ class BydPropertyUpdater(propertyService: PropertyService) : BasePropertyUpdater
             }
 
             BYDAutoFeatureIds.LIGHT_LOW_BEAM_LIGHT -> {
-                setLowBeamLightOn(LightDevice.isLowBeamStateOn())
+                val lowBeamLightState = headLightStateMap[value] ?: VehicleLightState.OFF
+                setLowBeamLightState(lowBeamLightState)
             }
         }
     }

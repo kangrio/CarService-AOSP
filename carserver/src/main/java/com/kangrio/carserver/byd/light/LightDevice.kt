@@ -7,10 +7,13 @@ import com.kangrio.carserver.byd.BydServices
 
 object LightDevice {
     fun isLowBeamStateOn(): Boolean = runCatching {
-        val lowBeamState = BydServices.getBydAutoManager().getInt(
+        getLowBeamState() == BYDAutoLightDevice.LIGHT_ON
+    }.getOrDefault(false)
+
+    fun getLowBeamState(): Int = runCatching {
+        BydServices.getBydAutoManager().getInt(
             BYDAutoConstants.BYDAUTO_DEVICE_LIGHT,
             BYDAutoFeatureIds.LIGHT_LOW_BEAM_LIGHT
         )
-        lowBeamState == BYDAutoLightDevice.LIGHT_ON
-    }.getOrDefault(false)
+    }.getOrDefault(0)
 }

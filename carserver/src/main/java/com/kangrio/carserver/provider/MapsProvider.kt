@@ -36,7 +36,7 @@ class MapsProvider : ContentProvider() {
     val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private val onSharedPreferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-        if (key == VehicleStore.VEHICLE_LOW_BEAM_STATE_ON.name) {
+        if (key == VehicleStore.VEHICLE_LOW_BEAM_STATE.name) {
             context?.contentResolver?.notifyChange(MAPS_SETTING_URI, null)
         }
     }

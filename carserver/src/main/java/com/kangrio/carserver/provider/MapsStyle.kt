@@ -1,5 +1,6 @@
 package com.kangrio.carserver.provider
 
+import android.car.VehicleLightState
 import com.google.maps.automotive.proto.Theme
 import com.kangrio.carserver.datastore.VehicleStore
 
@@ -24,7 +25,8 @@ object MapsStyle {
 
     fun getMapsTheme(): Theme {
         val mapStyle = VehicleStore.getValue(VehicleStore.MAPS_STYLE, "auto")
-        val lowBeamOn = VehicleStore.getValue(VehicleStore.VEHICLE_LOW_BEAM_STATE_ON, false)
+        val lowBeamState = VehicleStore.getValue(VehicleStore.VEHICLE_LOW_BEAM_STATE, VehicleLightState.OFF)
+        val lowBeamOn = lowBeamState == VehicleLightState.ON
         return when (mapStyle) {
             AUTO -> AUTO_THEME
             BEAM -> if (lowBeamOn) DARK_THEME else LIGHT_THEME

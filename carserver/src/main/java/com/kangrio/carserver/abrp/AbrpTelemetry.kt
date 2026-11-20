@@ -53,7 +53,7 @@ class TelemetrySource {
         val speed = VehicleStore.getValue(VehicleStore.SPEED_METER_PER_SEC, 0f).toDouble() * 3.6
         val parked = VehicleStore.getValue(VehicleStore.PARKING_BRAKE_ON, true)
         val isCharging = VehicleStore.getValue(VehicleStore.CHARGE_PORT_CONNECTED, false)
-        val power = VehicleStore.getValue(VehicleStore.CHARGE_RATE_WH, 0).toDouble() / 1000.0
+        val power = (VehicleStore.getValue(VehicleStore.CHARGE_RATE_MWH, 0f).toDouble() / 1_000_000.0) * -1
         val lat = 0.0 // VehicleStore.getValue(VehicleStore.LATITUDE, 0.0)
         val lon = 0.0 // VehicleStore.getValue(VehicleStore.LONGITUDE, 0.0)
 

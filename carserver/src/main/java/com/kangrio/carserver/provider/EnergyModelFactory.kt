@@ -200,14 +200,15 @@ class EnergyModelFactory private constructor() {
     }
 
     private fun readConsumptionWhPer100Km(): Int {
-        return VehicleStore.getValue(
-                VehicleStore.CONSUMPTION_WH_PER_100KM,
-            BasePropertyUpdater.DEFAULT_CONSUMPTION_WH_PER_100KM
+        val kmPerKwh = VehicleStore.getValue(
+                VehicleStore.CONSUMPTION_KM_PER_KWH,
+            BasePropertyUpdater.DEFAULT_CONSUMPTION_KM_PER_KWH
         )
+        return (100_000f / kmPerKwh.coerceAtLeast(1f)).toInt()
     }
 
     private fun createRoadLoadFromConsumption(whPer100km: Int): RoadLoadForce {
-        val scale = (whPer100km.toFloat() / BasePropertyUpdater.DEFAULT_CONSUMPTION_WH_PER_100KM)
+        val scale = (whPer100km.toFloat() / 100_000 / BasePropertyUpdater.DEFAULT_CONSUMPTION_KM_PER_KWH)
             .coerceIn(0.6f, 1.8f)
 
         return RoadLoadForce.newBuilder()

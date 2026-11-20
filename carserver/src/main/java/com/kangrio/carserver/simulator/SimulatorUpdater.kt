@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.car.VehicleAreaSeat
 import android.car.VehicleGear
 import android.car.VehicleIgnitionState
+import android.car.VehicleLightState
 import android.content.Context
 import android.location.Location
 import android.location.LocationListener
@@ -11,18 +12,9 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.os.SystemClock
 import com.kangrio.carserver.App
-import com.kangrio.carserver.byd.BydPropertyUpdater
-import com.kangrio.carserver.byd.BydServices
-import com.kangrio.carserver.byd.battery.BatteryDevice
-import com.kangrio.carserver.byd.bodywork.BodyworkDevice
-import com.kangrio.carserver.byd.charging.ChargingDevice
-import com.kangrio.carserver.byd.light.LightDevice
-import com.kangrio.carserver.byd.speed.SpeedDevice
 import com.kangrio.carserver.car.service.property.BasePropertyUpdater
 import com.kangrio.carserver.car.service.property.PropertyService
 import com.kangrio.carserver.datastore.VehicleStore
-import com.kangrio.carserver.util.LogUtils
-import com.kangrio.carserver.util.TAG
 import com.kangrio.carserver.util.hasLocationPermission
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,14 +53,14 @@ class SimulatorUpdater(propertyService: PropertyService) : BasePropertyUpdater(p
     }
 
     override fun setupInitialProperties() {
-        val lowBeamStateOn = VehicleStore.getValue(VehicleStore.VEHICLE_LOW_BEAM_STATE_ON, false)
-        setLowBeamLightOn(lowBeamStateOn)
+        val lowBeamStateOn = VehicleStore.getValue(VehicleStore.VEHICLE_LOW_BEAM_STATE, VehicleLightState.OFF)
+        setLowBeamLightState(lowBeamStateOn)
 
         val driverSeat = VehicleStore.getValue(VehicleStore.DRIVER_SEAT, VehicleAreaSeat.SEAT_ROW_1_LEFT)
         setDriverSeat(driverSeat)
 
         val capacityWh = VehicleStore.getValue(VehicleStore.BATTERY_CAPACITY_WH, DEFAULT_BATTERY_CAPACITY_WH)
-        setBatteryCapacityWh(capacityWh)
+        setBatteryCapacityWatts(capacityWh)
 
         val batteryLevelPercent = VehicleStore.getValue(VehicleStore.BATTERY_LEVEL_PERCENT, DEFAULT_BATTERY_LEVEL_PERCENT)
         setBatteryLevelPercent(batteryLevelPercent)
@@ -79,8 +71,8 @@ class SimulatorUpdater(propertyService: PropertyService) : BasePropertyUpdater(p
         val speedMeters = VehicleStore.getValue(VehicleStore.SPEED_METER_PER_SEC, 0f)
         setSpeedMetersPerSec(speedMeters)
 
-        val consumptionWh = VehicleStore.getValue(VehicleStore.CONSUMPTION_WH_PER_100KM, DEFAULT_CONSUMPTION_WH_PER_100KM)
-        setConsumptionWhPer100km(consumptionWh)
+        val consumptionKmPerKwh = VehicleStore.getValue(VehicleStore.CONSUMPTION_KM_PER_KWH, DEFAULT_CONSUMPTION_KM_PER_KWH)
+        setConsumptionKmPerKwh(consumptionKmPerKwh)
 
         val gear = VehicleStore.getValue(VehicleStore.CURRENT_GEAR, VehicleGear.GEAR_UNKNOWN)
         setCurrentGear(gear)
@@ -151,7 +143,7 @@ class SimulatorUpdater(propertyService: PropertyService) : BasePropertyUpdater(p
                 val drainWh = consumptionWhPer100Km * speedKmh / 100.0 * deltaHours
 
                 val tractionPowerKw = consumptionWhPer100Km / 1000.0 * speedKmh / 100.0
-                val power = when {
+                val powerKw = when {
                     speedKmh == 0.0 -> 0.9
                     else -> tractionPowerKw + 0.9
                 }
@@ -165,14 +157,15 @@ class SimulatorUpdater(propertyService: PropertyService) : BasePropertyUpdater(p
                     VehicleStore.BATTERY_CAPACITY_WH, DEFAULT_BATTERY_CAPACITY_WH).toFloat() * 100f)
 
                 val volt = DEFAULT_BATTERY_VOLTAGE
-                val amp = power * 1000.0 / volt
-                setChargingRateWh(volt, amp.toFloat())
+                val mAh = powerKw * 1_000_000.0 / volt
+                setChargingRateMilliWatts(volt, mAh.toFloat() * -1)
 
                 setBatteryLevelPercent(batteryPercent)
-                setConsumptionWhPer100km(consumptionWhPer100Km.toInt())
+                setConsumptionKmPerKwh(100_000f / consumptionWhPer100Km.toFloat())
 
-                val headLightOn = VehicleStore.getValue(VehicleStore.VEHICLE_LOW_BEAM_STATE_ON, false)
-                setLowBeamLightOn(!headLightOn)
+                var headLightState = VehicleStore.getValue(VehicleStore.VEHICLE_LOW_BEAM_STATE, VehicleLightState.OFF)
+                headLightState = (headLightState + 1) % 2
+                setLowBeamLightState(headLightState)
                 delay(updateIntervalMs.milliseconds)
             }
         }

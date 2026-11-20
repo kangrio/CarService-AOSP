@@ -4,7 +4,6 @@ import android.car.VehicleAreaType
 import android.car.VehicleGear
 import android.car.VehiclePropertyIds
 import android.car.hardware.CarPropertyValue
-import androidx.annotation.CallSuper
 import com.kangrio.carserver.datastore.VehicleStore
 import com.kangrio.carserver.provider.EnergyModelFactory
 import com.kangrio.carserver.util.LogUtils
@@ -20,10 +19,10 @@ abstract class BasePropertyUpdater(val propertyService: PropertyService) : IProp
         )
     }
 
-    final override fun setBatteryCapacityWh(wh: Int) {
-        LogUtils.i(TAG, "setBatteryCapacityWh wh=$wh")
-        setGlobalProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, wh)
-        VehicleStore.setValue(VehicleStore.BATTERY_CAPACITY_WH, wh)
+    final override fun setBatteryCapacityWatts(watts: Int) {
+        LogUtils.i(TAG, "setBatteryCapacityWatts watts=$watts")
+        setGlobalProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, watts)
+        VehicleStore.setValue(VehicleStore.BATTERY_CAPACITY_WH, watts)
     }
 
     final override fun setSpeedMetersPerSec(speed: Float) {
@@ -32,10 +31,16 @@ abstract class BasePropertyUpdater(val propertyService: PropertyService) : IProp
         VehicleStore.setValue(VehicleStore.SPEED_METER_PER_SEC, speed)
     }
 
-    final override fun setConsumptionWhPer100km(wh: Int) {
-        LogUtils.i(TAG, "setConsumptionWhPer100km wh=$wh")
-        EnergyModelFactory.setConsumptionWh(wh)
-        VehicleStore.setValue(VehicleStore.CONSUMPTION_WH_PER_100KM, wh)
+    private fun setConsumptionWhPer100km(watts: Int) {
+        LogUtils.i(TAG, "setConsumptionWhPer100km watts=$watts")
+        EnergyModelFactory.setConsumptionWh(watts)
+    }
+
+    final override fun setConsumptionKmPerKwh(km: Float) {
+        LogUtils.i(TAG, "setConsumptionKmPerKwh km=$km")
+        setGlobalProperty(291504658, km)
+        VehicleStore.setValue(VehicleStore.CONSUMPTION_KM_PER_KWH, km)
+        setConsumptionWhPer100km((100_000f / km.coerceAtLeast(1f)).toInt())
     }
 
     final override fun setBatteryLevelPercent(percent: Float) {
@@ -45,6 +50,7 @@ abstract class BasePropertyUpdater(val propertyService: PropertyService) : IProp
             DEFAULT_BATTERY_CAPACITY_WH
         )
         val wh = (percent * batteryCapacityWh.toFloat() / 100f).toInt()
+        setGlobalProperty(VehiclePropertyIds.EV_BATTERY_LEVEL, wh.toFloat())
         VehicleStore.setValue(VehicleStore.BATTERY_LEVEL_PERCENT, percent)
         VehicleStore.setValue(VehicleStore.BATTERY_LEVEL_WH, wh)
         EnergyModelFactory.setBatteryLevelWh(wh)
@@ -86,24 +92,30 @@ abstract class BasePropertyUpdater(val propertyService: PropertyService) : IProp
         VehicleStore.setValue(VehicleStore.DRIVER_SEAT, seat)
     }
 
-    final override fun setLowBeamLightOn(on: Boolean) {
-        LogUtils.i(TAG, "setLowBeamLightOn on=$on")
-        VehicleStore.setValue(VehicleStore.VEHICLE_LOW_BEAM_STATE_ON, on)
+    override fun setLowBeamLightState(state: Int) {
+        LogUtils.i(TAG, "setLowBeamLightState state=$state")
+        setGlobalProperty(VehiclePropertyIds.HEADLIGHTS_STATE, state)
+        VehicleStore.setValue(VehicleStore.VEHICLE_LOW_BEAM_STATE, state)
     }
 
-    final override fun setChargingRateWh(volt: Int?, amp: Float?) {
+    /**
+     * EV instantaneous charge rate in milliwatts.
+     * Positive rate indicates battery is being charged, and Negative rate indicates battery being discharged.
+     */
+    final override fun setChargingRateMilliWatts(volt: Int?, mAh: Float?) {
         volt?.let {
             VehicleStore.setValue(VehicleStore.BATTERY_VOLTAGE_VOLT, it)
         }
-        amp?.let {
-            VehicleStore.setValue(VehicleStore.BATTERY_CURRENT_AMP, it)
+        mAh?.let {
+            VehicleStore.setValue(VehicleStore.BATTERY_CURRENT_MAH, it)
         }
         val volts = VehicleStore.getValue(VehicleStore.BATTERY_VOLTAGE_VOLT, 0)
-        val currentAmp = VehicleStore.getValue(VehicleStore.BATTERY_CURRENT_AMP, 0f)
+        val mAh = VehicleStore.getValue(VehicleStore.BATTERY_CURRENT_MAH, 0f)
 
-        val wh = (volts.toFloat() * currentAmp).toInt()
-        LogUtils.i(TAG, "setChargingRateWh volt=$volts currentAmp=$currentAmp wh=$wh")
-        VehicleStore.setValue(VehicleStore.CHARGE_RATE_WH, wh)
+        val milliwatts = (volts.toFloat() * mAh)
+        LogUtils.i(TAG, "setChargingRateWh volt=$volts mAh=$mAh milliwatts=${milliwatts.toBigDecimal().unscaledValue()}")
+        setGlobalProperty(VehiclePropertyIds.EV_BATTERY_INSTANTANEOUS_CHARGE_RATE, milliwatts)
+        VehicleStore.setValue(VehicleStore.CHARGE_RATE_MWH, milliwatts)
     }
 
     companion object {
@@ -111,7 +123,7 @@ abstract class BasePropertyUpdater(val propertyService: PropertyService) : IProp
         const val DEFAULT_BATTERY_LEVEL_PERCENT: Float = 100f
         const val DEFAULT_BATTERY_LEVEL_WH =
             (DEFAULT_BATTERY_CAPACITY_WH.toFloat() * DEFAULT_BATTERY_LEVEL_PERCENT / 100f).toInt()
-        const val DEFAULT_CONSUMPTION_WH_PER_100KM = 14_400
+        const val DEFAULT_CONSUMPTION_KM_PER_KWH = 100_000f / 14_400f
         const val DEFAULT_BATTERY_VOLTAGE = 428
     }
 }
