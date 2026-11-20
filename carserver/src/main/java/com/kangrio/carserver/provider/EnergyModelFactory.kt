@@ -36,8 +36,13 @@ class EnergyModelFactory private constructor() {
     private var baseRoadLoadLinear = 1.6f
     private var baseRoadLoadQuadratic = 0.42f
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    @Volatile
+    private var isInitialized = false
 
     private fun initInternal() {
+        if (isInitialized) return
+        isInitialized = true
+
         val defaultEnergyModel = File(appContext.getExternalFilesDir(MODEL_DIR), MODEL_FILE_NAME)
         val customEnergyModel = VehicleStore.getValue(VehicleStore.ENERGY_MODEL_PATH, "")
         val usedModelFile: File = if (customEnergyModel.isEmpty()) {
