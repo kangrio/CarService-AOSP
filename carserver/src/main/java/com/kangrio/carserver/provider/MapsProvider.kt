@@ -7,6 +7,8 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
+import android.system.ErrnoException
+import android.system.OsConstants
 import androidx.core.net.toUri
 import com.google.maps.automotive.proto.AdditionalFeatureSettings
 import com.google.maps.automotive.proto.ApplicationUiSettings
@@ -29,6 +31,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 
 class MapsProvider : ContentProvider() {
@@ -191,7 +194,18 @@ class MapsProvider : ContentProvider() {
 
         scope.launch {
             ParcelFileDescriptor.AutoCloseOutputStream(writeSide).use { out ->
-                content.writeTo(out)
+                try {
+                    content.writeTo(out)
+                    out.flush()
+                } catch (e: IOException) {
+                    if (e.cause is ErrnoException &&
+                        (e.cause as ErrnoException).errno == OsConstants.EPIPE
+                    ) {
+                        LogUtils.d("MapsProvider", "Reader closed pipe before writing completed")
+                    } else {
+                        LogUtils.e("MapsProvider", "Failed to write Maps content", e)
+                    }
+                }
             }
         }
 
