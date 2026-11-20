@@ -21,6 +21,8 @@ import com.google.maps.automotive.proto.MapsSettings
 import com.google.maps.automotive.proto.PaymentNetworkSettings
 import com.google.maps.automotive.proto.StateOfChargeSettings
 import com.google.maps.automotive.proto.TouchScreenInteractability
+import com.google.maps.automotive.proto.VehicleEnergyForecast
+import com.google.maps.automotive.proto.VehicleEnergyForecast.ForecastQuality
 import com.kangrio.carserver.datastore.VehicleStore
 import com.kangrio.carserver.util.LogUtils
 import kotlinx.coroutines.CoroutineScope
@@ -77,21 +79,12 @@ class MapsProvider : ContentProvider() {
         val content = when (uri.authority) {
             "kangrio_google_maps_energy" -> when (uri.path) {
                 "/model" -> EnergyModelFactory.getEnergyModel()
-                "/forecast" -> {
-                    scope.launch {
-                        try {
-                            val autoCloseInputStream =
-                                ParcelFileDescriptor.AutoCloseInputStream(readSide)
-                            autoCloseInputStream.close()
-                            context?.contentResolver?.notifyChange(
-                                "content://kangrio_google_maps_energy/forecast".toUri(),
-                                null
-                            )
-                        } finally {
-                        }
-                    }
-                    return writeSide
-                }
+                "/forecast" -> VehicleEnergyForecast
+                    .newBuilder()
+                    .setForecastQuality(
+                        ForecastQuality.WITH_LIVE_TRAFFIC
+                    )
+                    .build()
                 else -> return null
             }
 
