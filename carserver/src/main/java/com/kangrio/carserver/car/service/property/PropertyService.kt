@@ -17,8 +17,6 @@ import android.car.hardware.property.ICarPropertyEventListener
 import android.os.IBinder
 import android.os.RemoteCallbackList
 import android.os.SystemClock
-import android.os.SystemProperties
-import com.kangrio.carserver.byd.PropertyUpdater
 import com.kangrio.carserver.datastore.VehicleStore
 import com.kangrio.carserver.util.LogUtils
 import com.kangrio.carserver.util.TAG
@@ -226,7 +224,7 @@ class PropertyService : ICarProperty.Stub() {
 
         return linkedMapOf(
             VehiclePropertyIds.INFO_MODEL_YEAR to 2023,
-            VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY to PropertyUpdater.DEFAULT_BATTERY_CAPACITY_WH,
+            VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY to BasePropertyUpdater.DEFAULT_BATTERY_CAPACITY_WH,
             VehiclePropertyIds.INFO_EV_PORT_LOCATION to PortLocationType.FRONT_RIGHT,
             VehiclePropertyIds.INFO_FUEL_TYPE to arrayOf(Integer.valueOf(FuelType.ELECTRIC)),
 

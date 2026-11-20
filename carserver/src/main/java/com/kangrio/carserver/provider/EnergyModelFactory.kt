@@ -9,7 +9,7 @@ import com.google.maps.automotive.proto.VehicleEnergyModel
 import com.google.maps.automotive.proto.VehicleInfo.HvacStatus
 import com.google.protobuf.util.JsonFormat
 import com.kangrio.carserver.App
-import com.kangrio.carserver.byd.PropertyUpdater
+import com.kangrio.carserver.car.service.property.BasePropertyUpdater
 import com.kangrio.carserver.data.EnergyData
 import com.kangrio.carserver.datastore.VehicleStore
 import com.kangrio.carserver.util.LogUtils
@@ -188,26 +188,26 @@ class EnergyModelFactory private constructor() {
     private fun readBatteryWh(): Int {
         return VehicleStore.getValue(
                 VehicleStore.BATTERY_LEVEL_WH,
-            PropertyUpdater.DEFAULT_BATTERY_LEVEL_WH
+            BasePropertyUpdater.DEFAULT_BATTERY_LEVEL_WH
             )
     }
 
     private fun readBatteryCapacityWh(): Int {
         return VehicleStore.getValue(
             VehicleStore.BATTERY_CAPACITY_WH,
-            PropertyUpdater.DEFAULT_BATTERY_CAPACITY_WH
+            BasePropertyUpdater.DEFAULT_BATTERY_CAPACITY_WH
         )
     }
 
     private fun readConsumptionWhPer100Km(): Int {
         return VehicleStore.getValue(
                 VehicleStore.CONSUMPTION_WH_PER_100KM,
-            PropertyUpdater.DEFAULT_CONSUMPTION_WH_PER_100KM
+            BasePropertyUpdater.DEFAULT_CONSUMPTION_WH_PER_100KM
         )
     }
 
     private fun createRoadLoadFromConsumption(whPer100km: Int): RoadLoadForce {
-        val scale = (whPer100km.toFloat() / PropertyUpdater.DEFAULT_CONSUMPTION_WH_PER_100KM)
+        val scale = (whPer100km.toFloat() / BasePropertyUpdater.DEFAULT_CONSUMPTION_WH_PER_100KM)
             .coerceIn(0.6f, 1.8f)
 
         return RoadLoadForce.newBuilder()

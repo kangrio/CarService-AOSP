@@ -5,13 +5,13 @@ import android.car.ICar
 import android.os.IBinder
 import com.kangrio.carserver.util.LogUtils
 import com.kangrio.carserver.util.TAG
-import com.kangrio.carserver.byd.PropertyUpdater
 import com.kangrio.carserver.car.service.AppFocusService
 import com.kangrio.carserver.car.service.EmptyNavigationService
 import com.kangrio.carserver.car.service.EmptyPowerService
 import com.kangrio.carserver.car.service.EmptySensorService
 import com.kangrio.carserver.car.service.EmptyVmsSubscriberService
 import com.kangrio.carserver.car.service.UxRestrictionsService
+import com.kangrio.carserver.car.service.property.IPropertyUpdater
 import com.kangrio.carserver.car.service.property.PropertyService
 
 class CarServer : ICar.Stub() {
@@ -23,7 +23,7 @@ class CarServer : ICar.Stub() {
     private val vmsSubscriberService = EmptyVmsSubscriberService()
     private val appFocusService = AppFocusService()
 
-    private val propertyUpdater = PropertyUpdater(propertyService)
+    private val propertyUpdater = IPropertyUpdater.create(propertyService)
 
     fun start() {
         propertyUpdater.start()
