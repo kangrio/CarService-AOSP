@@ -80,7 +80,7 @@
         <activity android:name=".activity.CrashReportActivity" />
 
         <service
-            android:name="com.kangrio.carserver.service.CarService"
+            android:name="com.android.car.CarService"
             android:exported="true"
             android:foregroundServiceType="dataSync">
             <intent-filter>

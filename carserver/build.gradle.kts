@@ -5,6 +5,7 @@ plugins {
 }
 
 val localProperties = rootProject.extra["LOCAL_PROPERTIES"] as Properties
+val buildTargetSdk = 29
 
 android {
     namespace = "com.kangrio.carserver"
@@ -18,7 +19,7 @@ android {
 //        applicationId = "com.android.car"
         applicationId = "com.kangrio.carserver"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = buildTargetSdk
         versionCode = 5
         versionName = "1.0.5"
     }
@@ -63,7 +64,7 @@ android {
 
 dependencies {
     compileOnly(files("libs/bydsdk.jar"))
-    implementation(files("libs/android.car.jar"))
+    implementation(files("libs/android.car.sdk.$buildTargetSdk.jar"))
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:6.1")
 
     implementation("com.google.protobuf:protobuf-java-util:4.35.0")

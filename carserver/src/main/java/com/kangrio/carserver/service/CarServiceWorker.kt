@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.android.car.CarService
 
 class CarServiceWorker(val context: Context, params: WorkerParameters) : Worker(context, params) {
     override fun doWork(): Result {

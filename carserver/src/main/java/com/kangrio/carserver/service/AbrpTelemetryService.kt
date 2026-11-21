@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
+import com.android.car.CarService
 import com.kangrio.carserver.abrp.AbrpTelemetryClient
 import com.kangrio.carserver.abrp.TelemetrySource
 import com.kangrio.carserver.datastore.SettingsStore
