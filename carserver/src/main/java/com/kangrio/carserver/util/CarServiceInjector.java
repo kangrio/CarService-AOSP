@@ -10,9 +10,11 @@ import android.util.Log;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class CarServiceInjector {
+    private static final Executor BIND_EXECUTOR = Executors.newSingleThreadExecutor();
     private static final ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -60,7 +62,7 @@ public class CarServiceInjector {
         Intent intent = new Intent("android.car.ICar");
         intent.setPackage("com.kangrio.carserver");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            context.bindService(intent, Context.BIND_AUTO_CREATE, Executors.newSingleThreadExecutor(), serviceConnection);
+            context.bindService(intent, Context.BIND_AUTO_CREATE, BIND_EXECUTOR, serviceConnection);
         }
     }
 }

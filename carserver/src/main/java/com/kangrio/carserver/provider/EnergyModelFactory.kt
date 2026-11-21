@@ -246,7 +246,7 @@ class EnergyModelFactory private constructor() {
 
         private const val MODEL_DIR = "model"
         private const val MODEL_FILE_NAME = "atto3_energy_model.json"
-        private const val MODEL_URI = "content://kangrio_google_maps_energy/model"
+        private const val MODEL_URI = "content://google_maps_energy/model"
 
         private val instance: EnergyModelFactory by lazy {
             EnergyModelFactory()

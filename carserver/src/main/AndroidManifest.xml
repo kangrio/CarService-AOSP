@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    android:sharedUserId="com.google.android.apps.maps">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -17,44 +16,44 @@
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 
     <permission
-        android:name="com.kangrio.carservice.permission.CAR_DISPLAY_IN_CLUSTER"
+        android:name="android.car.permission.CAR_DISPLAY_IN_CLUSTER"
         android:protectionLevel="normal" />
     <permission
-        android:name="com.kangrio.carservice.permission.CAR_NAVIGATION_MANAGER"
+        android:name="android.car.permission.CAR_NAVIGATION_MANAGER"
         android:protectionLevel="normal" />
     <permission
-        android:name="com.kangrio.carservice.permission.READ_CAR_POWER_POLICY"
-        android:protectionLevel="normal" />
-
-    <permission
-        android:name="com.kangrio.carservice.permission.VMS_PUBLISHER"
-        android:protectionLevel="normal" />
-    <permission
-        android:name="com.kangrio.carservice.permission.VMS_SUBSCRIBER"
-        android:protectionLevel="normal" />
-
-
-    <permission
-        android:name="com.kangrio.carservice.permission.CAR_SPEED"
-        android:protectionLevel="normal" />
-    <permission
-        android:name="com.kangrio.carservice.permission.CAR_VENDOR_EXTENSION"
+        android:name="android.car.permission.READ_CAR_POWER_POLICY"
         android:protectionLevel="normal" />
 
     <permission
-        android:name="com.kangrio.carservice.permission.CAR_INFO"
+        android:name="android.car.permission.VMS_PUBLISHER"
         android:protectionLevel="normal" />
     <permission
-        android:name="com.kangrio.carservice.permission.CAR_ENERGY"
+        android:name="android.car.permission.VMS_SUBSCRIBER"
+        android:protectionLevel="normal" />
+
+
+    <permission
+        android:name="android.car.permission.CAR_SPEED"
         android:protectionLevel="normal" />
     <permission
-        android:name="com.kangrio.carservice.permission.CAR_POWERTRAIN"
+        android:name="android.car.permission.CAR_VENDOR_EXTENSION"
+        android:protectionLevel="normal" />
+
+    <permission
+        android:name="android.car.permission.CAR_INFO"
         android:protectionLevel="normal" />
     <permission
-        android:name="com.kangrio.carservice.permission.CAR_ENERGY_PORTS"
+        android:name="android.car.permission.CAR_ENERGY"
         android:protectionLevel="normal" />
     <permission
-        android:name="com.kangrio.carservice.permission.READ_CAR_DISPLAY_UNITS"
+        android:name="android.car.permission.CAR_POWERTRAIN"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="android.car.permission.CAR_ENERGY_PORTS"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="android.car.permission.READ_CAR_DISPLAY_UNITS"
         android:protectionLevel="normal" />
 
     <application
@@ -108,7 +107,7 @@
 
         <provider
             android:name=".provider.MapsProvider"
-            android:authorities="kangrio_google_maps_energy;kangrio_google_maps_settings;kangrio_google_maps_assisted_driving;kangrio_google_maps_vehicle_profile"
+            android:authorities="google_maps_energy;google_maps_settings;google_maps_assisted_driving;google_maps_vehicle_profile"
             android:enabled="true"
             android:exported="true" />
 
