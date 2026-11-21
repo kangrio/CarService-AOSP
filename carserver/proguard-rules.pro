@@ -4,6 +4,7 @@
 
 # Stub
 -keep class android.** { *; }
+-keep class com.android.car.** { *; }
 -dontwarn android.media.AudioDevicePort
 -dontwarn android.media.AudioPatch
 -dontwarn android.media.AudioPort
