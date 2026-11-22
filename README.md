@@ -11,6 +11,8 @@ CarService-AOSP fills that gap. It provides a CarService that can be added to a 
 ## Download
 Telegram: [https://t.me/GStore000](https://t.me/GStore000)
 
+Note: You need to patch the APK yourself using https://github.com/kangrio/CarService-patches. The APK must have a minSdkVersion of 29 or lower.
+
 ## Features
 
 - CarService running on standard (non-Automotive) AOSP
