@@ -76,7 +76,7 @@ class MapsProvider : ContentProvider() {
         }
 
         val content = when (uri.authority) {
-            "google_maps_energy" -> when (uri.path) {
+            "kangrio_google_maps_energy" -> when (uri.path) {
                 "/model" -> EnergyModelFactory.getEnergyModel()
                 "/forecast" -> VehicleEnergyForecast
                     .newBuilder()
@@ -87,7 +87,7 @@ class MapsProvider : ContentProvider() {
                 else -> return null
             }
 
-            "google_maps_vehicle_profile" -> when (uri.path) {
+            "kangrio_google_maps_vehicle_profile" -> when (uri.path) {
                 "/content" -> AssistedDrivingProfileOuterClass
                     .AssistedDrivingProfile
                     .newBuilder()
@@ -96,7 +96,7 @@ class MapsProvider : ContentProvider() {
                 else -> return null
             }
 
-            "google_maps_settings" -> when (uri.path) {
+            "kangrio_google_maps_settings" -> when (uri.path) {
                 "/content" -> MapsSettings
                     .newBuilder()
                     .setApplicationUiSettings(
@@ -170,7 +170,7 @@ class MapsProvider : ContentProvider() {
                 else -> return null
             }
 
-            "google_maps_assisted_driving" -> when (uri.path) {
+            "kangrio_google_maps_assisted_driving" -> when (uri.path) {
                 "/profile" -> AssistedDrivingProfileOuterClass
                     .AssistedDrivingProfile
                     .newBuilder()
@@ -243,6 +243,6 @@ class MapsProvider : ContentProvider() {
     }
 
     companion object {
-        val MAPS_SETTING_URI = "content://google_maps_settings/content".toUri()
+        val MAPS_SETTING_URI = "content://kangrio_google_maps_settings/content".toUri()
     }
 }

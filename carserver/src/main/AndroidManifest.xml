@@ -107,7 +107,7 @@
 
         <provider
             android:name=".provider.MapsProvider"
-            android:authorities="google_maps_energy;google_maps_settings;google_maps_assisted_driving;google_maps_vehicle_profile"
+            android:authorities="kangrio_google_maps_energy;kangrio_google_maps_settings;kangrio_google_maps_assisted_driving;kangrio_google_maps_vehicle_profile"
             android:enabled="true"
             android:exported="true" />
 
