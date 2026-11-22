@@ -222,13 +222,17 @@ class PropertyService : ICarProperty.Stub() {
                 EvChargingConnectorType.IEC_TYPE_2_CCS_DC.toByte()
             )
         )
+        val vehicleTypes = VehicleStore.getValue(
+            VehicleStore.VEHICLE_TYPES,
+            VehicleStore.VEHICLE_TYPE_EV
+        )
 
         return linkedMapOf(
             VehiclePropertyIds.INFO_MODEL_YEAR to 2023,
             VehiclePropertyIds.INFO_EV_PORT_LOCATION to PortLocationType.FRONT_RIGHT,
-            VehiclePropertyIds.INFO_FUEL_TYPE to arrayOf(Integer.valueOf(FuelType.ELECTRIC)),
 
             // changeable
+            VehiclePropertyIds.INFO_FUEL_TYPE to vehicleTypes.map { Integer.valueOf(it.toInt()) }.toTypedArray(),
             VehiclePropertyIds.INFO_VIN to vehicleVin,
             VehiclePropertyIds.INFO_MAKE to vehicleName,
             VehiclePropertyIds.INFO_MODEL to vehicleName,

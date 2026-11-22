@@ -45,6 +45,7 @@ class VehicleSettings : AppCompatActivity() {
     private val clearEnergyButton: MaterialButton by lazy { findViewById(R.id.clearEnergyModelButton) }
     private val mapsStyleToggleGroup: MaterialButtonToggleGroup by lazy { findViewById(R.id.mapsStyleToggleGroup) }
     private val plugTypesButton: MaterialButton by lazy { findViewById(R.id.plugTypesButton) }
+    private val vehicleTypeToggleGroup: MaterialButtonToggleGroup by lazy { findViewById(R.id.vehicleTypeToggleGroup) }
 
     private val plugTypes = EvChargingConnectorType::class.java.declaredFields.mapNotNull { field ->
         field.name to field.getInt(null).toByte()
@@ -207,6 +208,18 @@ class VehicleSettings : AppCompatActivity() {
                 else -> R.id.mapsStyleAutoButton
             }
         )
+        val vehicleType = VehicleStore.getValue(VehicleStore.VEHICLE_TYPES, VehicleStore.VEHICLE_TYPE_EV)
+        vehicleTypeToggleGroup.check(
+            if (vehicleType.contentEquals(VehicleStore.VEHICLE_TYPE_EV)) {
+                R.id.vehicleTypeElectricButton
+            } else if (vehicleType.contentEquals(VehicleStore.VEHICLE_TYPE_ICE)) {
+                R.id.vehicleTypeIceButton
+            } else if (vehicleType.contentEquals(VehicleStore.VEHICLE_TYPE_PLUG_IN)) {
+                R.id.vehicleTypePluginButton
+            } else {
+                R.id.vehicleTypeElectricButton
+            }
+        )
 
         vinText.text = "virtual VIN: ${VehicleStore.getValue(VehicleStore.VEHICLE_VIN, "-")}"
     }
@@ -262,6 +275,22 @@ class VehicleSettings : AppCompatActivity() {
             }
         }
 
+    private fun selectedVehicleType(): ByteArray =
+        when (vehicleTypeToggleGroup.checkedButtonId) {
+            R.id.vehicleTypeElectricButton -> {
+                VehicleStore.VEHICLE_TYPE_EV
+            }
+            R.id.vehicleTypeIceButton -> {
+                VehicleStore.VEHICLE_TYPE_ICE
+            }
+            R.id.vehicleTypePluginButton -> {
+                VehicleStore.VEHICLE_TYPE_PLUG_IN
+            }
+            else -> {
+                VehicleStore.VEHICLE_TYPE_EV
+            }
+        }
+
     private fun save() {
         val name = nameInput.text?.toString()?.trim().orEmpty()
         val capacity = capacityInput.text?.toString()?.toFloatOrNull()
@@ -279,10 +308,12 @@ class VehicleSettings : AppCompatActivity() {
 
         val seat = selectedSeat()
         val mapsStyle = selectedMapsStyle()
+        val vehicleType = selectedVehicleType()
         VehicleStore.setValue(VehicleStore.VEHICLE_NAME, name)
         VehicleStore.setValue(VehicleStore.BATTERY_CAPACITY_WH, capacity!!)
         VehicleStore.setValue(VehicleStore.DRIVER_SEAT, seat)
         VehicleStore.setValue(VehicleStore.MAPS_STYLE, mapsStyle)
+        VehicleStore.setValue(VehicleStore.VEHICLE_TYPES, vehicleType)
 
         Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show()
         showRestartDialog()

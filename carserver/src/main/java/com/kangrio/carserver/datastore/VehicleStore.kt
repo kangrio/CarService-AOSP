@@ -1,5 +1,6 @@
 package com.kangrio.carserver.datastore
 
+import android.car.FuelType
 import android.car.hardware.property.EvChargingConnectorType
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -10,6 +11,10 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 object VehicleStore : DataStoreBase("vehicle") {
+    val VEHICLE_TYPE_EV = byteArrayOf(FuelType.ELECTRIC.toByte())
+    val VEHICLE_TYPE_ICE = byteArrayOf(FuelType.LEADED.toByte())
+    val VEHICLE_TYPE_PLUG_IN = byteArrayOf(FuelType.ELECTRIC.toByte(), FuelType.LEADED.toByte())
+
     val BATTERY_CAPACITY_WH = floatPreferencesKey("vehicle_battery_capacity_wh")
     val BATTERY_LEVEL_WH = floatPreferencesKey("vehicle_battery_level_wh")
     val BATTERY_LEVEL_PERCENT = floatPreferencesKey("vehicle_battery_level_percent")
@@ -41,6 +46,7 @@ object VehicleStore : DataStoreBase("vehicle") {
     val VEHICLE_LOW_BEAM_STATE = intPreferencesKey("vehicle_low_beam_state")
     val MAPS_STYLE = stringPreferencesKey("vehicle_maps_style")
     val VEHICLE_PLUG_TYPES = byteArrayPreferencesKey("vehicle_plug_types")
+    val VEHICLE_TYPES = byteArrayPreferencesKey("vehicle_types")
 
     override fun init(context: Context) {
         super.init(context)
@@ -53,5 +59,6 @@ object VehicleStore : DataStoreBase("vehicle") {
             EvChargingConnectorType.IEC_TYPE_2_CCS_DC.toByte()
         )
         setValue(VEHICLE_PLUG_TYPES, getValue(VEHICLE_PLUG_TYPES, plugTypes))
+        setValue(VEHICLE_TYPES, getValue(VEHICLE_TYPES, VEHICLE_TYPE_EV))
     }
 }
