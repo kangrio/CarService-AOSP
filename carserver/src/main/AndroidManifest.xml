@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 
+    <!-- Original automotive permissions -->
     <permission
         android:name="android.car.permission.CAR_DISPLAY_IN_CLUSTER"
         android:protectionLevel="normal" />
@@ -31,7 +32,6 @@
     <permission
         android:name="android.car.permission.VMS_SUBSCRIBER"
         android:protectionLevel="normal" />
-
 
     <permission
         android:name="android.car.permission.CAR_SPEED"
@@ -54,6 +54,47 @@
         android:protectionLevel="normal" />
     <permission
         android:name="android.car.permission.READ_CAR_DISPLAY_UNITS"
+        android:protectionLevel="normal" />
+
+    <!-- Custom permissions -->
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_DISPLAY_IN_CLUSTER"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_NAVIGATION_MANAGER"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.READ_CAR_POWER_POLICY"
+        android:protectionLevel="normal" />
+
+    <permission
+        android:name="com.kangrio.carservice.permission.VMS_PUBLISHER"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.VMS_SUBSCRIBER"
+        android:protectionLevel="normal" />
+
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_SPEED"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_VENDOR_EXTENSION"
+        android:protectionLevel="normal" />
+
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_INFO"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_ENERGY"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_POWERTRAIN"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_ENERGY_PORTS"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.READ_CAR_DISPLAY_UNITS"
         android:protectionLevel="normal" />
 
     <application
