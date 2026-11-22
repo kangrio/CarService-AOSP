@@ -19,7 +19,7 @@ abstract class BasePropertyUpdater(val propertyService: PropertyService) : IProp
         )
     }
 
-    final override fun setBatteryCapacityWatts(watts: Int) {
+    final override fun setBatteryCapacityWatts(watts: Float) {
         LogUtils.i(TAG, "setBatteryCapacityWatts watts=$watts")
         setGlobalProperty(VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, watts)
         VehicleStore.setValue(VehicleStore.BATTERY_CAPACITY_WH, watts)
@@ -49,11 +49,11 @@ abstract class BasePropertyUpdater(val propertyService: PropertyService) : IProp
             VehicleStore.BATTERY_CAPACITY_WH,
             DEFAULT_BATTERY_CAPACITY_WH
         )
-        val wh = (percent * batteryCapacityWh.toFloat() / 100f).toInt()
-        setGlobalProperty(VehiclePropertyIds.EV_BATTERY_LEVEL, wh.toFloat())
+        val wh = (percent * batteryCapacityWh / 100f)
+        setGlobalProperty(VehiclePropertyIds.EV_BATTERY_LEVEL, wh)
         VehicleStore.setValue(VehicleStore.BATTERY_LEVEL_PERCENT, percent)
         VehicleStore.setValue(VehicleStore.BATTERY_LEVEL_WH, wh)
-        EnergyModelFactory.setBatteryLevelWh(wh)
+        EnergyModelFactory.setBatteryLevelWh(wh.toInt())
     }
 
     final override fun setBatteryHealthPercent(percent: Float) {
@@ -119,10 +119,10 @@ abstract class BasePropertyUpdater(val propertyService: PropertyService) : IProp
     }
 
     companion object {
-        const val DEFAULT_BATTERY_CAPACITY_WH = 58_636
+        const val DEFAULT_BATTERY_CAPACITY_WH = 58_636f
         const val DEFAULT_BATTERY_LEVEL_PERCENT: Float = 100f
         const val DEFAULT_BATTERY_LEVEL_WH =
-            (DEFAULT_BATTERY_CAPACITY_WH.toFloat() * DEFAULT_BATTERY_LEVEL_PERCENT / 100f).toInt()
+            (DEFAULT_BATTERY_CAPACITY_WH * DEFAULT_BATTERY_LEVEL_PERCENT / 100f)
         const val DEFAULT_CONSUMPTION_KM_PER_KWH = 100_000f / 14_400f
         const val DEFAULT_BATTERY_VOLTAGE = 428
     }

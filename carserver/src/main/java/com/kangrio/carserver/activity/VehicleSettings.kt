@@ -190,7 +190,7 @@ class VehicleSettings : AppCompatActivity() {
         updateEnergyStatus()
         nameInput.setText(VehicleStore.getValue(VehicleStore.VEHICLE_NAME, ""))
 
-        val capacity = VehicleStore.getValue(VehicleStore.BATTERY_CAPACITY_WH, 0)
+        val capacity = VehicleStore.getValue(VehicleStore.BATTERY_CAPACITY_WH, 0f)
         if (capacity > 0) capacityInput.setText(capacity.toString())
         updateCapacityHelper()
 
@@ -264,7 +264,7 @@ class VehicleSettings : AppCompatActivity() {
 
     private fun save() {
         val name = nameInput.text?.toString()?.trim().orEmpty()
-        val capacity = capacityInput.text?.toString()?.toIntOrNull()
+        val capacity = capacityInput.text?.toString()?.toFloatOrNull()
 
         var valid = true
         if (name.isEmpty()) {
@@ -310,8 +310,8 @@ class VehicleSettings : AppCompatActivity() {
 
     private companion object {
         private const val MODEL_DIR = "model"
-        const val MIN_CAPACITY_WH = 1_000
-        const val MAX_CAPACITY_WH = 300_000
+        const val MIN_CAPACITY_WH = 1_000f
+        const val MAX_CAPACITY_WH = 300_000f
         const val MAX_MODEL_BYTES = 1_000_000
     }
 }

@@ -20,7 +20,7 @@ interface IPropertyUpdater {
     fun setupInitialProperties()
 
     fun setGlobalProperty(propId: Int, value: Any)
-    fun setBatteryCapacityWatts(watts: Int)
+    fun setBatteryCapacityWatts(watts: Float)
     fun setBatteryLevelPercent(percent: Float)
     fun setBatteryHealthPercent(percent: Float)
     fun setSpeedMetersPerSec(speed: Float)

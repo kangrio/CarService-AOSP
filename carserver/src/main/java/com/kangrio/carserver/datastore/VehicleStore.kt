@@ -10,8 +10,8 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 object VehicleStore : DataStoreBase("vehicle") {
-    val BATTERY_CAPACITY_WH = intPreferencesKey("vehicle_battery_capacity_wh")
-    val BATTERY_LEVEL_WH = intPreferencesKey("vehicle_battery_level_wh")
+    val BATTERY_CAPACITY_WH = floatPreferencesKey("vehicle_battery_capacity_wh")
+    val BATTERY_LEVEL_WH = floatPreferencesKey("vehicle_battery_level_wh")
     val BATTERY_LEVEL_PERCENT = floatPreferencesKey("vehicle_battery_level_percent")
     val BATTERY_VOLTAGE_VOLT = intPreferencesKey("vehicle_battery_voltage_volt")
     val BATTERY_CURRENT_MAH = floatPreferencesKey("vehicle_battery_current_mah")

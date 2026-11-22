@@ -7,7 +7,7 @@ import com.kangrio.carserver.byd.BydServices
 object BatteryDevice {
     const val DEFAULT_BATTERY_VOLTAGE = 428
 
-    fun getBatteryCapacityWh(): Int {
+    fun getBatteryCapacityWh(): Float {
 //        if (!BydServices.supportAutoService) return Int.MAX_VALUE
 
         val batteryCapacityCurrentAmp = BydServices.getBydAutoManager().getInt(
@@ -16,7 +16,7 @@ object BatteryDevice {
         )
 
         val capacityWh = (DEFAULT_BATTERY_VOLTAGE * batteryCapacityCurrentAmp)
-        return capacityWh
+        return capacityWh.toFloat()
     }
 
     fun getBatteryLevelPercent(): Float {

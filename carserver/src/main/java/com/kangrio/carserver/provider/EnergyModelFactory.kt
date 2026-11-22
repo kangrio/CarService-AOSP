@@ -194,14 +194,14 @@ class EnergyModelFactory private constructor() {
         return VehicleStore.getValue(
                 VehicleStore.BATTERY_LEVEL_WH,
             BasePropertyUpdater.DEFAULT_BATTERY_LEVEL_WH
-            )
+            ).toInt()
     }
 
     private fun readBatteryCapacityWh(): Int {
         return VehicleStore.getValue(
             VehicleStore.BATTERY_CAPACITY_WH,
             BasePropertyUpdater.DEFAULT_BATTERY_CAPACITY_WH
-        )
+        ).toInt()
     }
 
     private fun readConsumptionWhPer100Km(): Int {
