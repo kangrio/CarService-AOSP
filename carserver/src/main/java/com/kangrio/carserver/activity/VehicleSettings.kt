@@ -191,7 +191,7 @@ class VehicleSettings : AppCompatActivity() {
         updateEnergyStatus()
         nameInput.setText(VehicleStore.getValue(VehicleStore.VEHICLE_NAME, ""))
 
-        val capacity = VehicleStore.getValue(VehicleStore.BATTERY_CAPACITY_WH, 0f)
+        val capacity = VehicleStore.getValue(VehicleStore.BATTERY_CAPACITY_WH, 0f).toInt()
         if (capacity > 0) capacityInput.setText(capacity.toString())
         updateCapacityHelper()
 
