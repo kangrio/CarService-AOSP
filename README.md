@@ -13,6 +13,19 @@ Telegram: [https://t.me/GStore000](https://t.me/GStore000)
 
 Note: You need to patch the APK yourself using https://github.com/kangrio/CarService-patches. The APK must have a minSdkVersion of 29 or lower.
 
+
+## Runnable Apps
+
+The following Android Automotive apps have been tested and confirmed to run with CarService-AOSP:
+
+- Google Maps Automotive
+- Waze Automotive
+- PlugShare Automotive
+- ABRP (A Better Routeplanner) Automotive
+
+**Other apps:** Compatibility has not been verified. Feel free to install and test other Android Automotive apps yourself.
+
+
 ## Features
 
 - CarService running on standard (non-Automotive) AOSP
