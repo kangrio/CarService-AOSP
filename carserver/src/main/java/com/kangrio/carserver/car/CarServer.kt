@@ -6,6 +6,7 @@ import android.os.IBinder
 import com.kangrio.carserver.util.LogUtils
 import com.kangrio.carserver.util.TAG
 import com.kangrio.carserver.car.service.AppFocusService
+import com.kangrio.carserver.car.service.CarMediaService
 import com.kangrio.carserver.car.service.EmptyNavigationService
 import com.kangrio.carserver.car.service.EmptyPowerService
 import com.kangrio.carserver.car.service.EmptySensorService
@@ -22,6 +23,7 @@ class CarServer : ICar.Stub() {
     private val powerService = EmptyPowerService()
     private val vmsSubscriberService = EmptyVmsSubscriberService()
     private val appFocusService = AppFocusService()
+    private val carMediaService = CarMediaService()
 
     private val propertyUpdater = IPropertyUpdater.create(propertyService)
 
@@ -55,6 +57,7 @@ class CarServer : ICar.Stub() {
             Car.INFO_SERVICE -> propertyService
             Car.APP_FOCUS_SERVICE -> appFocusService
             Car.VMS_SUBSCRIBER_SERVICE -> vmsSubscriberService
+            Car.CAR_MEDIA_SERVICE -> carMediaService
             else -> null
         }
         LogUtils.i(TAG, "getCarService serviceName=$serviceName found=${service != null}")
