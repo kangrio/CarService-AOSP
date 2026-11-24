@@ -7,8 +7,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.datastore.preferences.core.Preferences
-import com.kangrio.carserver.datastore.DataStoreBase
+import org.json.JSONObject
 
 inline val <reified T> T.TAG: String
     get() {
@@ -55,3 +54,7 @@ fun View.applySystemBarInsets(
         insets
     }
 }
+
+fun JSONObject.getIntOrNull(name: String) = runCatching { this.getInt(name) }.getOrNull()
+fun JSONObject.getStringOrNull(name: String) = runCatching { this.getString(name) }.getOrNull()
+fun JSONObject.getDoubleOrNull(name: String) = runCatching { this.getDouble(name) }.getOrNull()

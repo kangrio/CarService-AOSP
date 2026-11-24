@@ -17,6 +17,8 @@ import com.kangrio.carserver.data.BydMate
 import com.kangrio.carserver.datastore.VehicleStore
 import com.kangrio.carserver.util.LogUtils
 import com.kangrio.carserver.util.TAG
+import com.kangrio.carserver.util.getDoubleOrNull
+import com.kangrio.carserver.util.getIntOrNull
 import com.kangrio.carserver.util.hasLocationPermission
 import fi.iki.elonen.NanoHTTPD
 import org.json.JSONObject
@@ -28,6 +30,8 @@ class BydMateWebHookUpdater(propertyService: PropertyService, private val port: 
 
     private var server: WebHookServer? = null
     private var currentSpeedMps = 0f
+    private var currentData = BydMate()
+    private var previousData = BydMate()
 
     init {
         val availablePort = findAvailablePort()
@@ -138,21 +142,36 @@ class BydMateWebHookUpdater(propertyService: PropertyService, private val port: 
 
     /**
      * BydMate not expose these data
-     * setBatteryCapacityWatts(watts: Float)
-     * setBatteryHealthPercent(percent: Float)
-     * setSpeedMetersPerSec(speed: Float)
      * setConsumptionKmPerKwh(km: Float)
      * setCurrentGear(gear: Int)
-     * setParkingBrakeOn(on: Boolean)
      * setIgnitionState(state: Int)
      * setDriverSeat(seat: Int)
      * setLowBeamLightState(state: Int)
      */
     private fun updateProperties(data: BydMate) {
-        setBatteryLevelPercent(data.soc.toFloat())
-        setChargingRateMilliWatts(DEFAULT_BATTERY_VOLTAGE, data.power.toFloat() * 1_000_000f * -1)
-        setChargingPortConnected(data.isCharging)
+        currentData = currentData.mergeNotsNull(data)
 
+        if (currentData.soc != previousData.soc) {
+            setBatteryLevelPercent(currentData.soc?.toFloat() ?: DEFAULT_BATTERY_LEVEL_PERCENT)
+        }
+
+        if (currentData.soh != previousData.soh) {
+            setBatteryHealthPercent(currentData.soh?.toFloat() ?: 94f)
+        }
+
+        if (currentData.is_parked != previousData.is_parked) {
+            setParkingBrakeOn(currentData.is_parked == 1)
+        }
+
+        if (currentData.voltage != previousData.voltage || currentData.current != previousData.current) {
+            setChargingRateMilliWatts(currentData.voltage ?: DEFAULT_BATTERY_VOLTAGE, (currentData.current ?: 0f).toFloat() * -1000f)
+        }
+
+        if (currentData.isCharging != previousData.isCharging) {
+            setChargingPortConnected(currentData.isCharging == 1)
+        }
+
+        previousData = currentData.copy()
         LogUtils.d(TAG, "Telemetry updated: $data")
     }
 
@@ -186,9 +205,15 @@ class BydMateWebHookUpdater(propertyService: PropertyService, private val port: 
                 val json = JSONObject(body)
 
                 val telemetry = BydMate(
-                    soc = json.getDouble("soc"),
-                    power = json.getDouble("power"),
-                    isCharging = json.getBoolean("is_charging"),
+                    soc = json.getIntOrNull("soc"),
+                    is_parked = json.getIntOrNull("is_parked"),
+                    soh = json.getIntOrNull("soh"),
+                    speed = json.getIntOrNull("speed"),
+                    voltage = json.getIntOrNull("voltage"),
+                    capacity = json.getDoubleOrNull("capacity"),
+                    isCharging = json.getIntOrNull("is_charging"),
+                    current = json.getDoubleOrNull("current"),
+                    power = json.getDoubleOrNull("power"),
                 )
 
                 updateProperties(telemetry)
