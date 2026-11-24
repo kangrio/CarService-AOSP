@@ -8,6 +8,13 @@ Android Automotive OS ships with `CarService`, the system service that exposes t
 
 CarService-AOSP fills that gap. It provides a CarService that can be added to a regular AOSP build, so automotive apps like Google Maps Automotive can find the services they expect.
 
+## Supported Versions
+
+| AOSP version | API level | Status        |
+|--------------|-----------|---------------|
+| Android 10   | 29        | In development |
+| Android 11+  | 30+       | Planned       |
+
 ## Download
 Telegram: [https://t.me/GStore000](https://t.me/GStore000)
 
@@ -44,12 +51,24 @@ The following Android Automotive apps have been tested and confirmed to run with
 - Support for running Google Maps Automotive
 - Built against AOSP Android 10 (API 29)
 
-## Supported Versions
+## BYD Mate Webhook Configuration
 
-| AOSP version | API level | Status        |
-|--------------|-----------|---------------|
-| Android 10   | 29        | In development |
-| Android 11+  | 30+       | Planned       |
+CarService-AOSP supports receiving live vehicle telemetry from BYD Mate through its local HTTP webhook.
+
+### Configuration
+
+1. Open **BYD Mate**.
+2. Navigate to **Settings → Integrate → Webhook**.
+3. Turn on **Webhook**.
+4. Enter the following webhook URL:
+
+   ```text
+   127.0.0.1:58765/webhook
+   ```
+
+5. Save the configuration.
+
+Once enabled, BYD Mate will send vehicle telemetry to CarService-AOSP automatically.
 
 ## Disclaimer
 
