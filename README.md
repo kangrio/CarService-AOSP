@@ -13,6 +13,17 @@ Telegram: [https://t.me/GStore000](https://t.me/GStore000)
 
 Note: You need to patch the APK yourself using https://github.com/kangrio/CarService-patches. The APK must have a minSdkVersion of 29 or lower.
 
+## Usage
+
+Follow these steps in the exact order:
+
+1. **Install CarService** on your device.
+2. **Install Google App Host**.
+3. Open CarService and complete the initial setup.
+4. Install any automotive-patched apps you want to use (e.g. Google Maps Automotive, Waze Automotive, PlugShare Automotive, or ABRP Automotive).
+5. Allow **all installed apps** (CarService, Google App Host, and automotive apps) to run automatically at startup (Autostart).
+
+**Important:** The installation and setup order must be followed exactly. Do not skip or rearrange the steps.
 
 ## Runnable Apps
 
