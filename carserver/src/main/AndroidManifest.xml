@@ -56,6 +56,9 @@
     <permission
         android:name="android.car.permission.READ_CAR_DISPLAY_UNITS"
         android:protectionLevel="normal" />
+    <permission
+        android:name="android.car.permission.CAR_EXTERIOR_ENVIRONMENT"
+        android:protectionLevel="normal" />
 
     <!-- Custom permissions -->
     <permission
@@ -96,6 +99,9 @@
         android:protectionLevel="normal" />
     <permission
         android:name="com.kangrio.carservice.permission.READ_CAR_DISPLAY_UNITS"
+        android:protectionLevel="normal" />
+    <permission
+        android:name="com.kangrio.carservice.permission.CAR_EXTERIOR_ENVIRONMENT"
         android:protectionLevel="normal" />
 
     <application
