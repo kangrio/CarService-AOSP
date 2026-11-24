@@ -24,6 +24,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.kangrio.carserver.MainActivity
 import com.kangrio.carserver.R
+import com.kangrio.carserver.byd.BydServices
 import com.kangrio.carserver.datastore.VehicleStore
 import com.kangrio.carserver.provider.MapsStyle
 import com.kangrio.carserver.util.applySystemBarInsets
@@ -46,6 +47,7 @@ class VehicleSettings : AppCompatActivity() {
     private val mapsStyleToggleGroup: MaterialButtonToggleGroup by lazy { findViewById(R.id.mapsStyleToggleGroup) }
     private val plugTypesButton: MaterialButton by lazy { findViewById(R.id.plugTypesButton) }
     private val vehicleTypeToggleGroup: MaterialButtonToggleGroup by lazy { findViewById(R.id.vehicleTypeToggleGroup) }
+    private val dataMethodToggleGroup: MaterialButtonToggleGroup by lazy { findViewById(R.id.dataMethodToggleGroup) }
 
     private val plugTypes = EvChargingConnectorType::class.java.declaredFields.mapNotNull { field ->
         field.name to field.getInt(null).toByte()
@@ -220,6 +222,23 @@ class VehicleSettings : AppCompatActivity() {
                 R.id.vehicleTypeElectricButton
             }
         )
+        val dataMethod = VehicleStore.getValue(VehicleStore.VEHICLE_DATA_METHOD, VehicleStore.DATA_METHOD_NATIVE)
+        dataMethodToggleGroup.check(
+            when (dataMethod) {
+                VehicleStore.DATA_METHOD_NATIVE -> {
+                    R.id.dataMethodNativeButton
+                }
+                VehicleStore.DATA_METHOD_BYD_MATE -> {
+                    R.id.dataMethodBydMateButton
+                }
+                VehicleStore.DATA_METHOD_SIMULATOR -> {
+                    R.id.dataMethodSimulatorButton
+                }
+                else -> {
+                    if (BydServices.supportAutoService) R.id.dataMethodNativeButton else R.id.dataMethodSimulatorButton
+                }
+            }
+        )
 
         vinText.text = "virtual VIN: ${VehicleStore.getValue(VehicleStore.VEHICLE_VIN, "-")}"
     }
@@ -291,6 +310,22 @@ class VehicleSettings : AppCompatActivity() {
             }
         }
 
+    private fun selectedDataMethod(): String =
+        when(dataMethodToggleGroup.checkedButtonId) {
+            R.id.dataMethodNativeButton -> {
+                VehicleStore.DATA_METHOD_NATIVE
+            }
+            R.id.dataMethodBydMateButton -> {
+                VehicleStore.DATA_METHOD_BYD_MATE
+            }
+            R.id.dataMethodSimulatorButton -> {
+                VehicleStore.DATA_METHOD_SIMULATOR
+            }
+            else -> {
+                if (BydServices.supportAutoService) VehicleStore.DATA_METHOD_NATIVE else VehicleStore.DATA_METHOD_SIMULATOR
+            }
+    }
+
     private fun save() {
         val name = nameInput.text?.toString()?.trim().orEmpty()
         val capacity = capacityInput.text?.toString()?.toFloatOrNull()
@@ -309,11 +344,13 @@ class VehicleSettings : AppCompatActivity() {
         val seat = selectedSeat()
         val mapsStyle = selectedMapsStyle()
         val vehicleType = selectedVehicleType()
+        val dataMethod = selectedDataMethod()
         VehicleStore.setValue(VehicleStore.VEHICLE_NAME, name)
         VehicleStore.setValue(VehicleStore.BATTERY_CAPACITY_WH, capacity!!)
         VehicleStore.setValue(VehicleStore.DRIVER_SEAT, seat)
         VehicleStore.setValue(VehicleStore.MAPS_STYLE, mapsStyle)
         VehicleStore.setValue(VehicleStore.VEHICLE_TYPES, vehicleType)
+        VehicleStore.setValue(VehicleStore.VEHICLE_DATA_METHOD, dataMethod)
 
         Toast.makeText(this, "Saved", Toast.LENGTH_SHORT).show()
         showRestartDialog()

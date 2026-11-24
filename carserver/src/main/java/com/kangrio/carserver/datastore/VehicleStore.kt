@@ -9,11 +9,16 @@ import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.kangrio.carserver.byd.BydServices
 
 object VehicleStore : DataStoreBase("vehicle") {
     val VEHICLE_TYPE_EV = byteArrayOf(FuelType.ELECTRIC.toByte())
     val VEHICLE_TYPE_ICE = byteArrayOf(FuelType.LEADED.toByte())
     val VEHICLE_TYPE_PLUG_IN = byteArrayOf(FuelType.ELECTRIC.toByte(), FuelType.LEADED.toByte())
+
+    const val DATA_METHOD_NATIVE = "NATIVE"
+    const val DATA_METHOD_BYD_MATE = "BYD_MATE"
+    const val DATA_METHOD_SIMULATOR = "SIMULATOR"
 
     val BATTERY_CAPACITY_WH = floatPreferencesKey("vehicle_battery_capacity_wh")
     val BATTERY_LEVEL_WH = floatPreferencesKey("vehicle_battery_level_wh")
@@ -47,6 +52,8 @@ object VehicleStore : DataStoreBase("vehicle") {
     val MAPS_STYLE = stringPreferencesKey("vehicle_maps_style")
     val VEHICLE_PLUG_TYPES = byteArrayPreferencesKey("vehicle_plug_types")
     val VEHICLE_TYPES = byteArrayPreferencesKey("vehicle_types")
+    val VEHICLE_DATA_METHOD = stringPreferencesKey("vehicle_data_method")
+    val VEHICLE_WEBHOOK_PORT = intPreferencesKey("vehicle_webhook_port")
 
     override fun init(context: Context) {
         super.init(context)
@@ -60,5 +67,6 @@ object VehicleStore : DataStoreBase("vehicle") {
         )
         setValue(VEHICLE_PLUG_TYPES, getValue(VEHICLE_PLUG_TYPES, plugTypes))
         setValue(VEHICLE_TYPES, getValue(VEHICLE_TYPES, VEHICLE_TYPE_EV))
+        setValue(VEHICLE_DATA_METHOD, getValue(VEHICLE_DATA_METHOD, if (BydServices.supportAutoService) DATA_METHOD_NATIVE else DATA_METHOD_SIMULATOR))
     }
 }

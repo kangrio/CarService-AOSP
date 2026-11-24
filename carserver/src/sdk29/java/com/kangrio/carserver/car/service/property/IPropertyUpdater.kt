@@ -2,15 +2,19 @@ package com.kangrio.carserver.car.service.property
 
 import com.kangrio.carserver.byd.BydPropertyUpdater
 import com.kangrio.carserver.byd.BydServices
+import com.kangrio.carserver.datastore.VehicleStore
 import com.kangrio.carserver.simulator.SimulatorUpdater
+import com.kangrio.carserver.webhook.bydmate.BydMateWebHookUpdater
 
 interface IPropertyUpdater {
     companion object {
         fun create(propertyService: PropertyService): IPropertyUpdater {
-            return if (BydServices.supportAutoService) {
-                BydPropertyUpdater(propertyService)
-            } else {
-                SimulatorUpdater(propertyService)
+            val dataMethod = VehicleStore.getValue(VehicleStore.VEHICLE_DATA_METHOD, VehicleStore.DATA_METHOD_NATIVE)
+            return when (dataMethod) {
+                VehicleStore.DATA_METHOD_NATIVE -> BydPropertyUpdater(propertyService)
+                VehicleStore.DATA_METHOD_SIMULATOR -> SimulatorUpdater(propertyService)
+                VehicleStore.DATA_METHOD_BYD_MATE -> BydMateWebHookUpdater(propertyService)
+                else -> if (BydServices.supportAutoService) BydPropertyUpdater(propertyService) else SimulatorUpdater(propertyService)
             }
         }
     }
