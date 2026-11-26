@@ -111,7 +111,8 @@ object OtaUpdater {
             SettingsStore.setValue(SettingsStore.LAST_OTA_CHECK_TIME, System.currentTimeMillis())
 
             val apkAsset = release.assets.firstOrNull { asset ->
-                asset.name.endsWith(".apk", ignoreCase = true)
+                val targetSdk = context.applicationInfo.targetSdkVersion
+                asset.name.endsWith(".apk", ignoreCase = true) && asset.name.contains("sdk$targetSdk")
             } ?: run {
                 LogUtils.w(TAG, "No APK asset found in release ${release.tag_name}")
                 return@withContext null
