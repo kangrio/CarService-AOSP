@@ -7,11 +7,11 @@ import com.kangrio.carserver.util.LogUtils
 import com.kangrio.carserver.util.TAG
 import com.kangrio.carserver.car.service.AppFocusService
 import com.kangrio.carserver.car.service.CarMediaService
-import com.kangrio.carserver.car.service.EmptyNavigationService
+import com.kangrio.carserver.car.service.InstrumentClusterNavigationService
 import com.kangrio.carserver.car.service.EmptyPowerService
 import com.kangrio.carserver.car.service.EmptySensorService
-import com.kangrio.carserver.car.service.EmptyVmsSubscriberService
 import com.kangrio.carserver.car.service.UxRestrictionsService
+import com.kangrio.carserver.car.service.VmsBrokerService
 import com.kangrio.carserver.car.service.property.IPropertyUpdater
 import com.kangrio.carserver.car.service.property.PropertyService
 
@@ -19,9 +19,9 @@ class CarServer : ICar.Stub() {
     private val propertyService = PropertyService()
     private val sensorService = EmptySensorService()
     private val uxRestrictionsService = UxRestrictionsService()
-    private val navigationService = EmptyNavigationService()
+    private val navigationService = InstrumentClusterNavigationService()
     private val powerService = EmptyPowerService()
-    private val vmsSubscriberService = EmptyVmsSubscriberService()
+    private val vmsSubscriberService = VmsBrokerService()
     private val appFocusService = AppFocusService()
     private val carMediaService = CarMediaService()
 
