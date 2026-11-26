@@ -116,6 +116,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setupCheckOtaButton() {
+        checkOtaButton.text = "Check update (${BuildConfig.VERSION_NAME})"
         checkOtaButton.setOnClickListener {
             scope.launch {
                 val job = launch {
@@ -135,7 +136,7 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
                 }
                 job.cancel()
-                checkOtaButton.text = "Check update"
+                checkOtaButton.text = "Check update (${BuildConfig.VERSION_NAME})"
             }
         }
     }
