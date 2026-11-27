@@ -63,7 +63,7 @@ CarService-AOSP supports receiving live vehicle telemetry from BYD Mate through 
 4. Enter the following webhook URL:
 
    ```text
-   127.0.0.1:58765/webhook
+   http://127.0.0.1:58765/webhook
    ```
 
 5. Save the configuration.
