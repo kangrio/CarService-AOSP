@@ -29,13 +29,13 @@ android {
         create("sdk29") {
             isDefault = true
             dimension = "targetSdk"
-            targetSdk = 29
+            minSdk = 29
             versionNameSuffix = "-sdk29"
         }
 
         create("sdk32") {
             dimension = "targetSdk"
-            targetSdk = 32
+            minSdk = 32
             versionNameSuffix = "-sdk32"
         }
     }
