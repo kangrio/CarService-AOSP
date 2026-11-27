@@ -16,10 +16,10 @@ class CarMediaService : ICarMedia.Stub() {
 //    private var mediaSources: ConcurrentHashMap<Int, ComponentName>? = null
     private val iCarMediaSourceListeners = CopyOnWriteArrayList<ICarMediaSourceListener>()
     private val deathRecipients = ConcurrentHashMap<IBinder, IBinder.DeathRecipient>()
-    override fun getLastMediaSources(p0: Int): List<ComponentName?>? {
+    override fun getLastMediaSources(p0: Int): List<ComponentName?> {
         return lastMediaSource?.let {
             listOf(it)
-        }
+        } ?: emptyList()
     }
 
     override fun getMediaSource(id: Int): ComponentName? {
