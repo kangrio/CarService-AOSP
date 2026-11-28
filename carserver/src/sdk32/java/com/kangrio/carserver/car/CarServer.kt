@@ -8,8 +8,8 @@ import com.kangrio.carserver.util.TAG
 import com.kangrio.carserver.car.service.AppFocusService
 import com.kangrio.carserver.car.service.CarMediaService
 import com.kangrio.carserver.car.service.InstrumentClusterNavigationService
-import com.kangrio.carserver.car.service.EmptyPowerService
 import com.kangrio.carserver.car.service.EmptySensorService
+import com.kangrio.carserver.car.service.PowerService
 import com.kangrio.carserver.car.service.UxRestrictionsService
 import com.kangrio.carserver.car.service.VmsBrokerService
 import com.kangrio.carserver.car.service.property.IPropertyUpdater
@@ -20,7 +20,7 @@ class CarServer : ICar.Stub() {
     private val sensorService = EmptySensorService()
     private val uxRestrictionsService = UxRestrictionsService()
     private val navigationService = InstrumentClusterNavigationService()
-    private val powerService = EmptyPowerService()
+    private val powerService = PowerService()
     private val vmsSubscriberService = VmsBrokerService()
     private val appFocusService = AppFocusService()
     private val carMediaService = CarMediaService()

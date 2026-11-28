@@ -7,9 +7,13 @@ import com.kangrio.carserver.util.LogUtils
 import com.kangrio.carserver.util.TAG
 
 class InstrumentClusterNavigationService : IInstrumentClusterNavigation.Stub() {
-    override fun getInstrumentClusterInfo(): CarNavigationInstrumentCluster? {
+    lateinit var carNavigationInstrumentCluster: CarNavigationInstrumentCluster
+    override fun getInstrumentClusterInfo(): CarNavigationInstrumentCluster {
         LogUtils.i(TAG, "getInstrumentClusterInfo")
-        return null
+
+        if (::carNavigationInstrumentCluster.isInitialized) return carNavigationInstrumentCluster
+        carNavigationInstrumentCluster = CarNavigationInstrumentCluster.createCluster(1000)
+        return carNavigationInstrumentCluster
     }
 
     override fun onNavigationStateChanged(bundle: Bundle?) {
